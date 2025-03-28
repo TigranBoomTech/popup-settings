@@ -1,0 +1,22 @@
+.templates_card {
+  margin-top: 25px;
+
+  .marketing_layout {
+    padding: 10px !important;
+
+    .header_description {
+      margin-bottom: 20px;
+    }
+
+    .industry_filter,
+    .form_type_filter,
+    .sort_filter {
+      margin-top: 20px;
+    }
+
+    .filters_box,
+    .sort_box {
+      margin-top: 10px;
+    }
+  }
+}
