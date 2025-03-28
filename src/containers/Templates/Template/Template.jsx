@@ -21,7 +21,7 @@ const Template = (props) => {
     <Card className={classes.template_card}>
       <Card.Content>
         <Box direction="vertical">
-          <Heading>{props.template?.label}</Heading>
+          <Heading className={classes.form_title}>{props.template?.label}</Heading>
           <Text>{props.template?.form_desc}</Text>
         </Box>
         <Builder

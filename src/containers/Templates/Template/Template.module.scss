@@ -3,5 +3,9 @@
   max-height: 637px;
   overflow: scroll;
   scrollbar-width: none;
-  border: 1px solid black;
+  border: 1px solid #eceff3;
+
+  .form_title {
+    margin-bottom: 10px;
+  }
 }
