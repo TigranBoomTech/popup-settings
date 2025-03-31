@@ -53,7 +53,7 @@
   transition: 0.2s all;
   padding: 9px 18px;
   margin-top: 5px;
-  background-color: #3899ec;
+  background-color: #116dff;
   color: white;
   border-radius: 3px;
   letter-spacing: 1px;
@@ -338,7 +338,7 @@ Store button
 
 .boomForm-field__content .boomForm-file__content {
   margin-top: 10px !important;
-  border: 2px solid #3899ec !important;
+  border: 1px solid gray !important;
   border-radius: 5px !important;
 }
 .boomFileUpload-file__content {
@@ -399,7 +399,7 @@ Store button
   -moz-transition: all 250ms ease-in;
   -ms-transition: all 250ms ease-in;
   -o-transition: all 250ms ease-in;
-  border: 2px solid #3899ec;
+  border: 1px solid gray;
   border-radius: 5px;
   font-family: "Wix Madefor Text", sans-serif;
 }
@@ -418,14 +418,14 @@ Store button
 .boomForm-field__content > div select:focus,
 .boomForm-field__content > div textarea:focus,
 .focus-visible {
-  border-color: rgba(87, 188, 255, 0.83) !important;
+  border-color: rgba(196, 196, 196, 0.83) !important;
   outline: 0;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
-    0 0 8px rgba(87, 188, 255, 0.6) !important;
+    0 0 8px rgba(223, 223, 223, 0.83) !important;
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
-    0 0 8px rgba(87, 188, 255, 0.6) !important;
+    0 0 8px rgba(223, 223, 223, 0.83) !important;
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
-    0 0 8px rgba(87, 188, 255, 0.6) !important;
+    0 0 8px rgba(223, 223, 223, 0.83) !important;
 }
 
 .boomForm-field__content input::placeholder,
@@ -792,7 +792,8 @@ Store button
   margin: 0px;
   outline: none;
   box-sizing: border-box;
-  padding: 6px 12px;
+  padding-left: 12px;
+  padding-top: 2px;
   -webkit-transition: all 250ms ease-in;
   -moz-transition: all 250ms ease-in;
   -ms-transition: all 250ms ease-in;

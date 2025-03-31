@@ -30,7 +30,7 @@ const Templates = () => {
   const [industries, setIndustries] = useState([]);
   const [formTypes, setFormTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [right, setRight] = React.useState(-440);
+  const [filterPanel, setFilterPanel] = useState(-440);
 
   useEffect(() => {
     getData(urls).then((response) => {
@@ -90,11 +90,11 @@ const Templates = () => {
   };
 
   const openPanel = () => {
-    setRight(0);
+    setFilterPanel(0);
   };
 
   const closePanel = () => {
-    setRight(-440);
+    setFilterPanel(-440);
   };
 
   return (
@@ -119,7 +119,11 @@ const Templates = () => {
             {filteredTemplates.map((template) => {
               return (
                 <Cell span={4}>
-                  <Template isUserPremium={user.premium} template={template} />
+                  <Template
+                    isUserPremium={user.premium}
+                    entries={user.subs}
+                    template={template}
+                  />
                 </Cell>
               );
             })}
@@ -129,7 +133,7 @@ const Templates = () => {
       <div
         className={classes.templates_side_panel_container}
         style={{
-          right: `${right}px`,
+          right: `${filterPanel}px`,
         }}
       >
         <SidePanel title="Filter" onCloseButtonClick={closePanel}>
