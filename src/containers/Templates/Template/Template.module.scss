@@ -1,11 +1,6 @@
 .template_card {
-  min-height: 637px;
-  max-height: 637px;
+  min-height: 500px;
+  max-height: 500px;
   overflow: scroll;
   scrollbar-width: none;
-  border: 1px solid #eceff3;
-
-  .form_title {
-    margin-bottom: 10px;
-  }
 }

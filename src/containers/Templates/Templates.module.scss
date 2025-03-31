@@ -1,22 +1,29 @@
-.templates_card {
-  margin-top: 25px;
+@import url("https://fonts.googleapis.com/css2?family=Wix+Madefor+Text:ital,wght@0,400..800;1,400..800&display=swap");
 
-  .marketing_layout {
-    padding: 10px !important;
+.templates_container {
+  display: block;
+  overflow: hidden;
+  position: relative;
 
-    .header_description {
-      margin-bottom: 20px;
-    }
+  .templates_page {
+    width: 100vw;
+    height: 100vh;
+  }
 
-    .industry_filter,
-    .form_type_filter,
-    .sort_filter {
+  .templates_side_panel_container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    box-shadow: "0 3px 24px 0 rgba(22, 45, 61, 0.18), 0 8px 8px 0 rgba(22, 45, 61, 0.12)";
+    transition: right 0.4s ease 0s;
+    z-index: 1000;
+
+    .filters_box {
       margin-top: 20px;
     }
 
-    .filters_box,
     .sort_box {
-      margin-top: 10px;
+      margin-top: 20px;
     }
   }
 }

@@ -2,8 +2,8 @@ import React from "react";
 import { Builder } from "boomform-builder";
 import useFields from "../../../hooks/useFields/useFields";
 import { Box, Card, Heading, Text } from "@wix/design-system";
-import './Form.scss'
-import classes from './Template.module.scss'
+import "./Form.scss";
+import classes from "./Template.module.scss";
 
 const Template = (props) => {
   let myFields = [];
@@ -20,12 +20,10 @@ const Template = (props) => {
   return (
     <Card className={classes.template_card}>
       <Card.Content>
-        <Box direction="vertical">
-          <Heading className={classes.form_title}>{props.template?.label}</Heading>
-          <Text>{props.template?.form_desc}</Text>
-        </Box>
         <Builder
           global={{
+            name: props.template.name,
+            description: props.template.desc,
             onSubmit: ({ state }) => {
               console.log("Mock submit, state: ", state);
             },
