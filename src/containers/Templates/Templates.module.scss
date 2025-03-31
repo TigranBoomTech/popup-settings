@@ -5,6 +5,20 @@
   overflow: hidden;
   position: relative;
 
+  .empty_state {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .templates_loader {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .templates_page {
     width: 100vw;
     height: 100vh;

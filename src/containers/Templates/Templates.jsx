@@ -10,6 +10,9 @@ import {
   Page,
   Button,
   SidePanel,
+  EmptyState,
+  Image,
+  Loader,
 } from "@wix/design-system";
 import urls from "./utils/urls";
 import { getData } from "./utils/helpers";
@@ -31,12 +34,14 @@ const Templates = () => {
   const [formTypes, setFormTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPanel, setFilterPanel] = useState(-440);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getData(urls).then((response) => {
       setTemplates(response[0]);
       setFilteredTemplates(response[0]);
       setUser(response[1]);
+      setLoading(false);
     });
   }, []);
 
@@ -115,19 +120,31 @@ const Templates = () => {
           }
         />
         <Page.Content>
-          <Layout>
-            {filteredTemplates.map((template) => {
-              return (
-                <Cell span={4}>
-                  <Template
-                    isUserPremium={user.premium}
-                    entries={user.subs}
-                    template={template}
-                  />
-                </Cell>
-              );
-            })}
-          </Layout>
+          {loading ? (
+            <Box className={classes.templates_loader}>
+              <Loader statusMessage="Uploading" />
+            </Box>
+          ) : filteredTemplates.length > 0 ? (
+            <Layout>
+              {filteredTemplates.map((template) => {
+                return (
+                  <Cell span={4}>
+                    <Template
+                      isUserPremium={user.premium}
+                      entries={user.subs}
+                      template={template}
+                    />
+                  </Cell>
+                );
+              })}
+            </Layout>
+          ) : (
+            <EmptyState
+              className={classes.empty_state}
+              title="No Templates Found"
+              subtitle="Try adjusting your filters"
+            />
+          )}
         </Page.Content>
       </Page>
       <div
