@@ -1,11 +1,62 @@
-.template_card {
-  min-height: 637px;
-  max-height: 637px;
-  overflow: scroll;
-  scrollbar-width: none;
-  border: 1px solid #eceff3;
+.template_container {
+  position: relative;
+  display: inline-block;
+}
 
-  .form_title {
-    margin-bottom: 10px;
+.template_card {
+  min-height: 500px;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.overlay {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  width: 0;
+  height: 100%;
+  overflow: hidden;
+  animation: slideIn 0.7s forwards;
+  pointer-events: none;
+}
+
+.template_container:hover .overlay {
+  animation: slideIn 0.5s forwards;
+  pointer-events: auto;
+}
+
+.overlay_button {
+  width: 130px;
+  background: #116dff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background 0.2s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.overlay_button:hover {
+  transform: scale(1.1);
+}
+
+.more_info_template_card {
+  max-width: 500px !important;
+  max-height: 400px !important;
+}
+
+@keyframes slideIn {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
   }
 }
