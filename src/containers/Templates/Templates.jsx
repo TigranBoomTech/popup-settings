@@ -14,15 +14,15 @@ import {
   Image,
   Loader,
 } from "@wix/design-system";
-import urls from "./utils/urls";
-import { getData } from "./utils/helpers";
+import { getData } from "../../helpers/templates/data";
+import { template_urls } from "../../helpers/templates/urls";
 import Template from "./Template/Template";
 import classes from "./Templates.module.scss";
 import {
   form_type_options,
   industry_options,
   sort_options,
-} from "./utils/options";
+} from "../../helpers/templates/options";
 import { ContentFilterSmall } from "@wix/wix-ui-icons-common";
 
 const Templates = () => {
@@ -37,7 +37,7 @@ const Templates = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getData(urls).then((response) => {
+    getData(template_urls).then((response) => {
       setTemplates(response[0]);
       setFilteredTemplates(response[0]);
       setUser(response[1]);

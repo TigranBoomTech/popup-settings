@@ -1,24 +1,20 @@
-import classes from "./App.module.css";
-import { Page } from "@wix/design-system";
+import Conditional_Mailing from "./containers/Conditional_Mailing/Conditional_Mailing";
 import Templates from "./containers/Templates/Templates";
+import { path } from "./helpers/common";
 
 function App() {
-  const urlParams = new URLSearchParams(window.location.search);
-  // should be changed to const and be clear based on url's 'shorType' param
-  let path = urlParams.get("showType");
-  path = "Templates";
+  let tempPath = path;
+  tempPath = "Conditional_Mailing";
 
   return (
     <>
-      {/* <Page width="100vw" height="100vh" className={classes.root}>
-        <Page.Content> */}
       {(() => {
-        switch (path) {
+        switch (tempPath) {
           case "Confirmation_Email":
           case "Notification_Email":
             return <div>Email Content</div>;
           case "Conditional_Mailing":
-            return <div>Conditional Mailing</div>;
+            return <Conditional_Mailing />;
           case "Templates":
             return <Templates />;
           case "Addons_Store":
@@ -33,8 +29,6 @@ function App() {
             return null;
         }
       })()}
-      {/* </Page.Content>
-      </Page> */}
     </>
   );
 }
