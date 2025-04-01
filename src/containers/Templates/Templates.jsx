@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Card,
   Cell,
   Layout,
-  MarketingPageLayout,
-  MarketingPageLayoutContent,
   Text,
   Checkbox,
   Search,
   RadioGroup,
+  Page,
+  Button,
+  SidePanel,
+  EmptyState,
+  Image,
   Loader,
 } from "@wix/design-system";
 import { getData } from "../../helpers/templates/data";
@@ -20,55 +22,50 @@ import {
   form_type_options,
   industry_options,
   sort_options,
-<<<<<<< Updated upstream
-} from "./utils/options";
-=======
 } from "../../helpers/templates/options";
 import { ContentFilterSmall } from "@wix/wix-ui-icons-common";
->>>>>>> Stashed changes
 
 const Templates = () => {
   const [templates, setTemplates] = useState([]);
   const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [user, setUser] = useState({});
   const [sort, setSort] = useState("");
-  const [industry, setIndustry] = useState([]);
-  const [formType, setFormType] = useState([]);
+  const [industries, setIndustries] = useState([]);
+  const [formTypes, setFormTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterPanel, setFilterPanel] = useState(-440);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getData(template_urls).then((response) => {
       setTemplates(response[0]);
       setFilteredTemplates(response[0]);
       setUser(response[1]);
+      setLoading(false);
     });
   }, []);
 
   const filterTemplates = () => {
     let updatedTemplates = [...templates];
 
-    // Apply search filter
     if (searchQuery) {
       updatedTemplates = updatedTemplates.filter((template) =>
         template.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // Apply industry filter
-    if (industry.length > 0) {
+    if (industries.length > 0) {
       updatedTemplates = updatedTemplates.filter((template) =>
-        industry.includes(template.industry)
+        industries.some((industry) => template.industry.includes(industry))
       );
     }
 
-    // Apply form type filter
-    if (formType.length > 0) {
+    if (formTypes.length > 0) {
       updatedTemplates = updatedTemplates.filter((template) =>
-        formType.includes(template.formType)
+        formTypes.some((formType) => template.form_type.includes(formType))
       );
     }
 
-    // Apply sorting
     if (sort) {
       updatedTemplates.sort((a, b) => {
         if (sort === "Name") return a.name.localeCompare(b.name);
@@ -83,148 +80,163 @@ const Templates = () => {
   useEffect(() => {
     filterTemplates();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sort, industry, formType, searchQuery, templates]);
+  }, [sort, industries, formTypes, searchQuery, templates]);
 
   const handleIndustryChagne = (id) => {
-    setIndustry((prev) =>
+    setIndustries((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
   const handleFormTypeChange = (id) => {
-    setFormType((prev) =>
+    setFormTypes((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   };
 
+  const openPanel = () => {
+    setFilterPanel(0);
+  };
+
+  const closePanel = () => {
+    setFilterPanel(-440);
+  };
+
   return (
-    <Card className={classes.templates_card}>
-      <MarketingPageLayout
-        removeImageHorizontalPadding
-        removeImageVerticalPadding
-        verticalAlign="middle"
-        className={classes.marketing_layout}
-        content={
-          <Box width="300px" height="540px" verticalAlign="middle">
-            <MarketingPageLayoutContent
-              size="large"
-              title="Everything You Need To Get Started Quickly"
-              className={classes.marketing_content_layout}
-              content={
-                <Box direction="vertical">
-                  <Text size="medium" className={classes.header_description}>
-                    Find a template that matches you business best, add your
-                    touch and make it yours.
-                  </Text>
-                  <Search
-                    placeholder="Search templates ..."
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <Box gap="10">
-                    <Box direction="vertical">
-                      <Text weight="bold" className={classes.industry_filter}>
-                        Browse by Industry
-                      </Text>
-                      <Box
-                        gap="1"
-                        direction="vertical"
-                        className={classes.filters_box}
-                      >
-                        {industry_options.map((type) => {
-                          return (
-                            <Checkbox
-                              key={type.id}
-                              id={type.id}
-                              size="medium"
-                              checked={industry.includes(type.value)}
-                              onChange={() => handleIndustryChagne(type.value)}
-                            >
-                              {type.value}
-                            </Checkbox>
-                          );
-                        })}
-                      </Box>
-                    </Box>
-                    <Box direction="vertical">
-                      <Text weight="bold" className={classes.form_type_filter}>
-                        Browse by Form Type
-                      </Text>
-                      <Box
-                        gap="1"
-                        direction="vertical"
-                        className={classes.filters_box}
-                      >
-                        {form_type_options.map((type) => {
-                          return (
-                            <Checkbox
-                              key={type.id}
-                              id={type.id}
-                              size="medium"
-                              checked={formType?.includes(type.value)}
-                              onChange={() => handleFormTypeChange(type.value)}
-                            >
-                              {type.value}
-                            </Checkbox>
-                          );
-                        })}
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Box direction="vertical">
-                    <Text weight="bold" className={classes.sort_filter}>
-                      Sort By
-                    </Text>
-                    <Box direction="vertical" className={classes.sort_box}>
-                      <RadioGroup
-                        value={sort}
-                        onChange={(option) => setSort(option)}
-                      >
-                        {sort_options.map((type) => {
-                          return (
-                            <RadioGroup.Radio value={type.value}>
-                              {type.value}
-                            </RadioGroup.Radio>
-                          );
-                        })}
-                      </RadioGroup>
-                    </Box>
-                  </Box>
-                </Box>
-              }
-            />
-          </Box>
-        }
-        image={
-          <Box
-            height="640px"
-            overflow="scroll"
-            style={{
-              maxHeight: "640px",
-              scrollbarWidth: "none",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <Layout alignItems="center" justifyItems="center">
-              {filteredTemplates.length > 0 ? (
-                filteredTemplates.map((template) => (
-                  <Cell span={6}>
+    <div className={classes.templates_container}>
+      <Page className={classes.templates_page}>
+        <Page.Header
+          title="Templates"
+          size="large"
+          actionsBar={
+            <Button
+              prefixIcon={<ContentFilterSmall />}
+              onClick={() => {
+                openPanel();
+              }}
+            >
+              Filter
+            </Button>
+          }
+        />
+        <Page.Content>
+          {loading ? (
+            <Box className={classes.templates_loader}>
+              <Loader statusMessage="Uploading" />
+            </Box>
+          ) : filteredTemplates.length > 0 ? (
+            <Layout>
+              {filteredTemplates.map((template) => {
+                return (
+                  <Cell span={4}>
                     <Template
-                      template={template}
                       isUserPremium={user.premium}
+                      entries={user.subs}
+                      template={template}
                     />
                   </Cell>
-                ))
-              ) : (
-                <Cell span={12}>
-                  <Loader />
-                </Cell>
-              )}
+                );
+              })}
             </Layout>
-          </Box>
-        }
-      />
-    </Card>
+          ) : (
+            <EmptyState
+              className={classes.empty_state}
+              title="No Templates Found"
+              subtitle="Try adjusting your filters"
+            />
+          )}
+        </Page.Content>
+      </Page>
+      <div
+        className={classes.templates_side_panel_container}
+        style={{
+          right: `${filterPanel}px`,
+        }}
+      >
+        <SidePanel title="Filter" onCloseButtonClick={closePanel}>
+          <SidePanel.Header title="Filter" />
+          <SidePanel.Content>
+            <Search
+              placeholder="Search templates ..."
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+
+            <Box gap="10" className={classes.filters_box}>
+              <Box direction="vertical">
+                <Text weight="bold" className={classes.industry_filter}>
+                  Industry
+                </Text>
+                <Box
+                  gap="1"
+                  direction="vertical"
+                  className={classes.filters_box}
+                >
+                  {industry_options.map((type) => {
+                    return (
+                      <Checkbox
+                        key={type.id}
+                        id={type.id}
+                        size="medium"
+                        checked={industries.includes(type.value)}
+                        onChange={() => handleIndustryChagne(type.value)}
+                      >
+                        {type.value}
+                      </Checkbox>
+                    );
+                  })}
+                </Box>
+              </Box>
+              <Box direction="vertical">
+                <Text weight="bold" className={classes.form_type_filter}>
+                  Form Type
+                </Text>
+                <Box
+                  gap="1"
+                  direction="vertical"
+                  className={classes.filters_box}
+                >
+                  {form_type_options.map((type) => {
+                    return (
+                      <Checkbox
+                        key={type.id}
+                        id={type.id}
+                        size="medium"
+                        checked={formTypes.includes(type.value)}
+                        onChange={() => handleFormTypeChange(type.value)}
+                      >
+                        {type.value}
+                      </Checkbox>
+                    );
+                  })}
+                </Box>
+              </Box>
+            </Box>
+
+            <Box direction="vertical" className={classes.sort_box}>
+              <Text weight="bold" className={classes.sort_filter}>
+                Sort By
+              </Text>
+              <Box direction="vertical" className={classes.sort_box}>
+                <RadioGroup value={sort} onChange={(option) => setSort(option)}>
+                  {sort_options.map((type) => {
+                    return (
+                      <RadioGroup.Radio value={type.value}>
+                        {type.value}
+                      </RadioGroup.Radio>
+                    );
+                  })}
+                </RadioGroup>
+              </Box>
+            </Box>
+          </SidePanel.Content>
+          <SidePanel.Footer>
+            <Button onClick={closePanel} priority="secondary" fullWidth>
+              Close
+            </Button>
+          </SidePanel.Footer>
+        </SidePanel>
+      </div>
+    </div>
   );
 };
 
