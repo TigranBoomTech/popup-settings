@@ -1,10 +1,11 @@
 import Conditional_Mailing from "./containers/Conditional_Mailing/Conditional_Mailing";
+import Mail_Editor from "./containers/Mail_Editor/Mail_Editor";
 import Templates from "./containers/Templates/Templates";
 import { path } from "./helpers/common";
 
 function App() {
   let tempPath = path;
-  tempPath = "Conditional_Mailing";
+  tempPath = "Notification_Email";
 
   return (
     <>
@@ -12,7 +13,7 @@ function App() {
         switch (tempPath) {
           case "Confirmation_Email":
           case "Notification_Email":
-            return <div>Email Content</div>;
+            return <Mail_Editor />;
           case "Conditional_Mailing":
             return <Conditional_Mailing />;
           case "Templates":
