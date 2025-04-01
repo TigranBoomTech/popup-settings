@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Wix+Madefor+Text:ital,wght@0,400..800;1,400..800&display=swap");
+
+.templates_container {
+  display: block;
+  overflow: hidden;
+  position: relative;
+
+  .empty_state {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .templates_loader {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .templates_page {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .templates_side_panel_container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    box-shadow: "0 3px 24px 0 rgba(22, 45, 61, 0.18), 0 8px 8px 0 rgba(22, 45, 61, 0.12)";
+    transition: right 0.4s ease 0s;
+    z-index: 1000;
+
+    .filters_box {
+      margin-top: 20px;
+    }
+
+    .sort_box {
+      margin-top: 20px;
+    }
+  }
+}
