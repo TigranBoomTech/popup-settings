@@ -1,0 +1,83 @@
+.addon_container {
+  position: relative;
+  display: inline-block;
+}
+
+.addon_card {
+  padding: 20px;
+  height: 300px;
+  min-width: 210px;
+
+  .addon_card_content {
+    display: flex;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    .addon_card_image {
+      flex-grow: 0;
+    }
+
+    .addon_card_header {
+      flex-grow: 1;
+    }
+
+    .premium_free_block {
+      flex-grow: 0;
+    }
+
+    .addon_card_footer {
+      flex-grow: 0;
+    }
+  }
+}
+
+.nigga {
+  background-color: red !important;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  background: rgb(255, 255, 255);
+  border-radius: 8px;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  animation: slideUp 0.7s forwards;
+  pointer-events: none;
+}
+
+.addon_container:hover .overlay {
+  animation: slideUp 0.5s forwards;
+  pointer-events: auto;
+}
+
+.addon_container:not(:hover) .overlay {
+  animation: slideDown 0.5s forwards;
+  pointer-events: auto;
+}
+
+@keyframes slideUp {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: 100%;
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    height: 100%;
+  }
+  100% {
+    height: 0;
+  }
+}

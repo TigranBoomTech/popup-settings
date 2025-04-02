@@ -1,0 +1,29 @@
+.addons_page {
+  width: 100vw;
+  height: 100vh;
+
+  .addons_layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+    gap: 20px;
+  }
+
+  .grid_item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .addons_loader {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .empty_state {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
