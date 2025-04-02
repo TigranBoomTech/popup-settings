@@ -10,10 +10,12 @@ import {
   Card,
   DatePicker,
   Dropdown,
+  Input,
   Text,
   TimeInput,
 } from "@wix/design-system";
 import classes from "./Condition.module.scss";
+import { Add, Minus } from "@wix/wix-ui-icons-common";
 
 const Condition = ({
   index,
@@ -68,7 +70,6 @@ const Condition = ({
     } else {
       setMatchedConditions(conditions[selectedField.type]);
     }
-    console.log(selectedSubField);
   }, [selectedField.type, selectedSubField]);
 
   useEffect(() => {
@@ -207,7 +208,7 @@ const Condition = ({
           maxHeightPixels="200px"
           dropdownWidth="auto"
           minWidthPixels="200px"
-          options={matchedConditions.map((condition, index) => ({
+          options={matchedConditions?.map((condition, index) => ({
             id: condition,
             value: condition,
           }))}
@@ -238,6 +239,7 @@ const Condition = ({
         ) : selectedField.type === "terms" ? null : selectedField.type ===
           "date" ? (
           <DatePicker
+            className={classes.date_picker}
             value={fieldValue ? new Date(fieldValue) : null}
             onChange={(value) => {
               if (value) {
@@ -248,12 +250,11 @@ const Condition = ({
                 setFieldValue(formattedValue);
               }
             }}
-            width="200px"
           />
         ) : selectedField.type === "time" ? (
           <TimeInput
+            className={classes.time_picker}
             step={60}
-            width="200px"
             value={
               fieldValue
                 ? (() => {
@@ -263,7 +264,7 @@ const Condition = ({
                     return date;
                   })()
                 : null
-            }    
+            }
             onChange={(value) => {
               const date = new Date(value.date);
               const hours = date.getHours().toString().padStart(2, "0");
@@ -272,7 +273,143 @@ const Condition = ({
               setFieldValue(formattedTime);
             }}
           />
-        ) : null}
+        ) : selectedField.type === "checkbox" ? (
+          selectedCondition === "checked" ||
+          selectedCondition === "not Checked" ? (
+            <Dropdown
+              className={classes.options_dropdown}
+              placeholder="Select Option"
+              maxHeightPixels="200px"
+              dropdownWidth="auto"
+              minWidthPixels="200px"
+              options={fieldOptions.map((option, index) => ({
+                id: option.name,
+                value: option.name,
+              }))}
+              selectedId={selectedSubField}
+              onSelect={(option) => {
+                handleSubFieldChange(option.value);
+              }}
+            />
+          ) : selectedCondition === "checked more than" ? (
+            <Dropdown
+              className={classes.options_dropdown}
+              placeholder="Select Amount"
+              maxHeightPixels="200px"
+              dropdownWidth="auto"
+              minWidthPixels="200px"
+              options={fieldOptions.map((option, index) => ({
+                id: index,
+                value: index,
+              }))}
+              selectedId={selectedSubField}
+              onSelect={(option) => {
+                handleSubFieldChange(option.value);
+              }}
+            />
+          ) : selectedCondition === "checked equal to" ? (
+            <Dropdown
+              className={classes.options_dropdown}
+              placeholder="Select Amount"
+              maxHeightPixels="200px"
+              dropdownWidth="auto"
+              minWidthPixels="200px"
+              options={fieldOptions.map((option, index) => ({
+                id: index + 1,
+                value: index + 1,
+              }))}
+              selectedId={selectedSubField}
+              onSelect={(option) => {
+                handleSubFieldChange(option.value);
+              }}
+            />
+          ) : selectedCondition === "checked less than" ? (
+            <Dropdown
+              className={classes.options_dropdown}
+              placeholder="Select Amount"
+              maxHeightPixels="200px"
+              dropdownWidth="auto"
+              minWidthPixels="200px"
+              options={fieldOptions.map((option, index) => ({
+                id: index + 2,
+                value: index + 2,
+              }))}
+              selectedId={selectedSubField}
+              onSelect={(option) => {
+                handleSubFieldChange(option.value);
+              }}
+            />
+          ) : null
+        ) : selectedField.type === "price" ? (
+          <>
+            <Input
+              className={classes.dollar_input}
+              placeholder="Dollars"
+              value={fieldValue.dollars}
+              onClear={() =>
+                setFieldValue({
+                  dollars: "0",
+                  cents: fieldValue.cents,
+                })
+              }
+              onChange={(e) => {
+                !isNaN(Number(e.target.value))
+                  ? setFieldValue({
+                      dollars: e.target.value,
+                      cents: fieldValue.cents,
+                    })
+                  : setFieldValue({
+                      dollars: "0",
+                      cents: fieldValue.cents,
+                    });
+              }}
+            />
+            <Input
+              className={classes.cent_input}
+              placeholder="Cents"
+              value={fieldValue.cents}
+              onClear={() =>
+                setFieldValue({
+                  dollars: fieldValue.dollars,
+                  cents: "0",
+                })
+              }
+              onChange={(e) => {
+                !isNaN(Number(e.target.value))
+                  ? setFieldValue({
+                      dollars: fieldValue.dollars,
+                      cents: e.target.value,
+                    })
+                  : setFieldValue({
+                      dollars: fieldValue.dollars,
+                      cents: "0",
+                    });
+              }}
+            />
+          </>
+        ) : (
+          <Input
+            className={classes.common_input}
+            placeholder="John Doe"
+            value={fieldValue}
+            onClear={() => setFieldValue("")}
+            onChange={(e) => {
+              setFieldValue(e.target.value);
+            }}
+          />
+        )}
+        <Add
+          onClick={() => {
+            addCondition();
+          }}
+        />
+        {!isLast && (
+          <Minus
+            onClick={() => {
+              removeCondition(index);
+            }}
+          />
+        )}
       </Card.Content>
     </Card>
   );

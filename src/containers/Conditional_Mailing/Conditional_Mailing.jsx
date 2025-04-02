@@ -119,7 +119,7 @@ const Conditional_Mailing = () => {
             {conditions.map((condition, index) => {
               const isLast = index === conditions.length - 1;
               return (
-                <Cell span={12}>
+                <Cell span={12} key={index}>
                   <Condition
                     index={index}
                     isLast={isLast}
@@ -142,7 +142,16 @@ const Conditional_Mailing = () => {
             title="No Conditions Found"
             subtitle="Your list is empty ! Start by adding your first condition"
           >
-            {<TextButton prefixIcon={<Add />}>Add Condition</TextButton>}
+            {
+              <TextButton
+                prefixIcon={<Add />}
+                onClick={() => {
+                  addCondition();
+                }}
+              >
+                Add Condition
+              </TextButton>
+            }
           </EmptyState>
         )}
       </Page.Content>
