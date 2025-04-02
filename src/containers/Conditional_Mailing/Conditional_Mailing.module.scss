@@ -1,4 +1,11 @@
 .conditional_mailing_page {
   width: 100vw;
   height: 100vh;
+
+  .empty_state {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

@@ -3,8 +3,18 @@ import axios from "axios";
 import { headers, user_url } from "../../helpers/common";
 import { debounce } from "../../helpers/conditional_mailing/debounce";
 import { checkCondition } from "../../helpers/conditional_mailing/check_condition";
-import { Page } from "@wix/design-system";
+import {
+  Box,
+  Cell,
+  EmptyState,
+  Layout,
+  Loader,
+  Page,
+  TextButton,
+} from "@wix/design-system";
 import classes from "./Conditional_Mailing.module.scss";
+import { Add } from "@wix/wix-ui-icons-common";
+import Condition from "./Condition/Condition";
 
 let count = 2;
 const Conditional_Mailing = () => {
@@ -15,6 +25,7 @@ const Conditional_Mailing = () => {
   const [confirmationEmail, setConfirmationEmail] = useState(false);
 
   useEffect(() => {
+    console.log(user_url);
     axios
       .get(user_url, headers)
       .then((response) => {
@@ -91,7 +102,50 @@ const Conditional_Mailing = () => {
   return (
     <Page className={classes.conditional_mailing_page}>
       <Page.Header title="Conditional Mailing" size="large" />
-      <Page.Content></Page.Content>
+      <Page.Content>
+        <Box maxWidth="800px">
+          {/* <Text>
+            Customize form communication effortlessly with Conditional Mailing.
+            This addon allows administrators to set conditions based on user
+            input, ensuring tailored email notifications for specific scenarios.
+          </Text> */}
+        </Box>
+        {loading ? (
+          <Box className={classes.conditional_mailing_layout}>
+            <Loader statusMessage="Uploading"></Loader>
+          </Box>
+        ) : conditions.length > 0 ? (
+          <Layout>
+            {conditions.map((condition, index) => {
+              const isLast = index === conditions.length - 1;
+              return (
+                <Cell span={12}>
+                  <Condition
+                    index={index}
+                    isLast={isLast}
+                    fields={fieldsData}
+                    condition={condition}
+                    key={`condition_${index}_${condition.field}`}
+                    addCondition={addCondition}
+                    removeCondition={removeCondition}
+                    updateCondition={updateCondition}
+                    conditionsLength={conditions.length}
+                    confirmationEmail={confirmationEmail}
+                  />
+                </Cell>
+              );
+            })}
+          </Layout>
+        ) : (
+          <EmptyState
+            className={classes.empty_state}
+            title="No Conditions Found"
+            subtitle="Your list is empty ! Start by adding your first condition"
+          >
+            {<TextButton prefixIcon={<Add />}>Add Condition</TextButton>}
+          </EmptyState>
+        )}
+      </Page.Content>
     </Page>
   );
 };
