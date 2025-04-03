@@ -1,9 +1,11 @@
 import { Page, Box, EmptyState, Loader } from "@wix/design-system";
 import React, { useEffect, useState } from "react";
-import classes from "./Addons.module.scss";
 import { getData } from "../../helpers/addons/data";
 import { addon_urls } from "../../helpers/addons/urls";
 import Addon from "./Addon/Addon";
+import axios from "axios";
+import classes from "./Addons.module.scss";
+import { comp_id, instance } from "../../helpers/common";
 
 const Addons = () => {
   const [loading, setLoading] = useState(true);
@@ -53,8 +55,7 @@ const Addons = () => {
       ? premiumAddonsCount.length - premiumAddons.length
       : 0;
 
-  const handleAddAddOn = (addOnItem, e) => {
-    e.stopPropagation();
+  const handleAddon = (addOnItem) => {
     setSettingsReload(addOnItem);
     if (availableAddOnsCount > 0 && addOnItem.allow_level === 1) {
       setAddTo((prev) => ({
@@ -62,18 +63,19 @@ const Addons = () => {
         [addOnItem.name]: !prev[addOnItem.name],
       }));
 
-      setPlanData((prev) => ({
+      setUser((prev) => ({
         ...prev,
         addons: [...prev.addons, addOnItem],
       }));
 
       addOnItem.allow_level === 1
-        ? setPremiumAddOns((prev) => [...prev, addOnItem])
+        ? setPremiumAddons((prev) => [...prev, addOnItem])
         : null;
 
-      installsCount = ++addOnItem.installs;
+      addOnItem.installs++;
+
       const pushData = {
-        instance: getParameterByName("instance"),
+        instance: instance,
         name: addOnItem.name,
       };
 
@@ -81,60 +83,62 @@ const Addons = () => {
         headers: { PLATFORM: "_WIX" },
       };
 
-      setIsLoaded(false);
+      setLoading(true);
       axios
-        .post(process.env.BOOMTECH_API + `/addons`, pushData, headers)
+        .post(import.meta.env.VITE_BOOMTECH_API + `/addons`, pushData, headers)
         .then(() => {
           const message = { reload: true };
           Wix.Settings.closeWindow(message);
         });
+      setLoading(false);
     } else if (addOnItem.allow_level === 0) {
       setAddTo((prev) => ({
         ...prev,
         [addOnItem.name]: !prev[addOnItem.name],
       }));
 
-      setPlanData((prev) => ({
+      setUser((prev) => ({
         ...prev,
         addons: [...prev.addons, addOnItem],
       }));
-      installsCount = ++addOnItem.installs;
+
+      addOnItem.installs++;
+
       const pushData = {
-        instance: getParameterByName("instance"),
+        instance: instance,
         name: addOnItem.name,
       };
 
       const headers = {
         headers: { PLATFORM: "_WIX" },
       };
-      setIsLoaded(false);
+      setLoading(true);
       axios
-        .post(process.env.BOOMTECH_API + `/addons`, pushData, headers)
+        .post(import.meta.env.VITE_BOOMTECH_API + `/addons`, pushData, headers)
         .then(() => {
           const message = { reload: true };
           Wix.Settings.closeWindow(message);
         });
+      setLoading(false);
     } else {
       redirectToUpgrade();
     }
   };
 
-  const handleRemoveAddOn = (addOnItem) => {
-    setCloseModal(!closeModal);
-
+  const handleRemoveAddon = (addOnItem) => {
     setAddTo((prev) => ({
       ...prev,
       [addOnItem.name]: false,
     }));
 
-    setPlanData((prev) => ({
+    setUser((prev) => ({
       ...prev,
       addons: prev.addons.filter((addon) => addon.name !== addOnItem.name),
     }));
 
-    installsCount = --addOnItem.installs;
+    addOnItem.installs--;
 
-    setPremiumAddOns((prev) =>
+    setPremiumAddons((prev) =>
       prev.filter((addon) => addon.name !== addOnItem.name)
     );
 
@@ -143,13 +147,12 @@ const Addons = () => {
     };
 
     axios.delete(
-      process.env.BOOMTECH_API +
-        `/addon?instance=${getParameterByName("instance")}&name=${
-          addOnItem.name
-        }`,
+      import.meta.env.VITE_BOOMTECH_API +
+        `/addon?instance=${instance}&name=${addOnItem.name}`,
       headers
     );
   };
+
   function setSettingsReload(addOnItem) {
     if (addOnItem.name === "Pagination") {
       Wix.Data.Public.set(
@@ -161,28 +164,20 @@ const Addons = () => {
       );
     }
   }
-  const clickRemove = (e, addOnItem) => {
+  const removeAddon = (addOnItem) => {
     if (addOnItem.name === "Pagination" || addOnItem.name === "Print") {
       axios.post(
-        process.env.BOOMTECH_API + `/addon`,
+        import.meta.env.VITE_BOOMTECH_API + `/addon`,
         {
-          instance: getParameterByName("instance"),
-          comp_id: Wix.Utils.getOrigCompId(),
+          instance: instance,
+          comp_id: comp_id,
           name: addOnItem.name,
           value: JSON.parse(addOnItem.default_value),
         },
         { headers: { PLATFORM: "_WIX" } }
       );
     }
-
     setSettingsReload(addOnItem);
-    e.stopPropagation();
-    setCloseModal(!closeModal);
-    setRemoveItem(addOnItem);
-  };
-
-  const handleModalCancel = () => {
-    setCloseModal(!closeModal);
   };
 
   return (
@@ -198,7 +193,13 @@ const Addons = () => {
             {addons.map((addon, index) => {
               return (
                 <Box key={index} className={classes.grid_item}>
-                  <Addon addon={addon} installed={addTo[addon.name]} />
+                  <Addon
+                    addon={addon}
+                    installed={addTo[addon.name]}
+                    handleAddon={handleAddon}
+                    removeAddon={removeAddon}
+                    handleRemoveAddon={handleRemoveAddon}
+                  />
                 </Box>
               );
             })}

@@ -25,7 +25,6 @@ const Conditional_Mailing = () => {
   const [confirmationEmail, setConfirmationEmail] = useState(false);
 
   useEffect(() => {
-    console.log(user_url);
     axios
       .get(user_url, headers)
       .then((response) => {

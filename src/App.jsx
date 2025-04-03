@@ -6,7 +6,7 @@ import { path } from "./helpers/common";
 
 function App() {
   let tempPath = path;
-  tempPath = "Conditional_Mailing";
+  tempPath = "Addons_Store";
 
   return (
     <>

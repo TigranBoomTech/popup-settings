@@ -49,7 +49,6 @@ const Condition = ({
   });
 
   const [fieldOptions, setFieldOptions] = useState([]);
-  console.log(fieldOptions);
   const [selectedSubField, setSelectedSubField] = useState(condition?.subField);
   const [selectedCondition, setSelectedCondition] = useState(
     condition?.condition
@@ -119,7 +118,6 @@ const Condition = ({
 
   const handleFieldChange = (value) => {
     const field = fields[value];
-    console.log(field);
     const { id, options = [], type } = field;
 
     let fieldType = type;
@@ -138,7 +136,6 @@ const Condition = ({
   };
 
   const handleSubFieldChange = (value) => {
-    console.log(value);
     setSelectedSubField(value);
   };
 

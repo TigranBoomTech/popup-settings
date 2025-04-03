@@ -16,7 +16,13 @@ import {
   ConfirmSmall,
 } from "@wix/wix-ui-icons-common";
 
-const Addon = ({ addon, installed }) => {
+const Addon = ({
+  addon,
+  installed,
+  handleAddon,
+  removeAddon,
+  handleRemoveAddon,
+}) => {
   const [hover, setHover] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -121,13 +127,22 @@ const Addon = ({ addon, installed }) => {
                   <Button
                     size="tiny"
                     skin="destructive"
-                    onClick={() => setShowModal(true)}
+                    onClick={() => {
+                      setShowModal(true);
+                      removeAddon(addon);
+                    }}
                     style={{ width: "120px" }}
                   >
                     Uninstall
                   </Button>
                 ) : (
-                  <Button size="tiny" style={{ width: "120px" }}>
+                  <Button
+                    size="tiny"
+                    style={{ width: "120px" }}
+                    onClick={() => {
+                      handleAddon(addon);
+                    }}
+                  >
                     Add To Site
                   </Button>
                 )}
@@ -146,7 +161,10 @@ const Addon = ({ addon, installed }) => {
         <CustomModalLayout
           theme="destructive"
           primaryButtonText="Delete"
-          primaryButtonOnClick={() => setShowModal(false)}
+          primaryButtonOnClick={() => {
+            setShowModal(false);
+            handleRemoveAddon(addon);
+          }}
           secondaryButtonText="Cancel"
           secondaryButtonOnClick={() => setShowModal(false)}
           onCloseButtonClick={() => setShowModal(false)}
