@@ -12,9 +12,27 @@
 //     width: 200px;
 // }
 
-.nigga {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+.condition_wrapper {
+  .condition {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+
+    .add,
+    .remove {
+      cursor: pointer;
+      background-color: rgba(128, 128, 128, 0.2);
+      border-radius: 50%;
+      padding: 3px;
+    }
+  }
 }

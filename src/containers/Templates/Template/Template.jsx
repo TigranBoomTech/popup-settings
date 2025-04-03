@@ -31,7 +31,6 @@ const Template = (props) => {
   });
 
   const handleConfirm = () => {
-    console.log("nigga", fields);
     fields.map((item) => {
       item.id = parseFloat(item.id);
       if (item.required) {
