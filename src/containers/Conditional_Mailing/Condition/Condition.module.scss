@@ -1,10 +1,20 @@
-.fields_dropdown,
-.conditions_dropdown,
-.options_dropdown,
-.date_picker,
-.time_picker,
-.dollar_input,
-.cent_input,
-.common_input {
-  width: 200px;
+// .fields_dropdown,
+// .conditions_dropdown,
+// .options_dropdown,
+// .date_picker,
+// .time_picker,
+// .dollar_input,
+// .cent_input,
+// .common_input,
+// .email_type_dropdown,
+// .toggle_container,
+// .form_emails_dropdown {
+//     width: 200px;
+// }
+
+.nigga {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
