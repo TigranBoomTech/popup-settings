@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import classes from "./Markers.module.scss";
 import { Box, Button, Input, InputArea, Text } from "@wix/design-system";
 import { Dismiss, Minus } from "@wix/wix-ui-icons-common";

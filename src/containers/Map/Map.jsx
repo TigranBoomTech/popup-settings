@@ -19,7 +19,7 @@ const mapStyles = {
   height: "100vh",
 };
 
-function Map(props) {
+const Map = () => {
   const [markers, setMarkers] = useState([
     {
       id: 1,
@@ -318,6 +318,6 @@ function Map(props) {
       </div>
     </div>
   );
-}
+};
 
 export default Map;
