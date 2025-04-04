@@ -1,12 +1,13 @@
 import Addons from "./containers/Addons/Addons";
 import Conditional_Mailing from "./containers/Conditional_Mailing/Conditional_Mailing";
 import Mail_Editor from "./containers/Mail_Editor/Mail_Editor";
+import Map from "./containers/Map/Map";
 import Templates from "./containers/Templates/Templates";
 import { path } from "./helpers/common";
 
 function App() {
   let tempPath = path;
-  tempPath = "Addons_Store";
+  tempPath = "Map_Modal";
 
   return (
     <>
@@ -26,7 +27,7 @@ function App() {
           case "Logic":
             return <div>Logic</div>;
           case "Map_Modal":
-            return <div>Map Modal</div>;
+            return <Map />;
           default:
             return null;
         }

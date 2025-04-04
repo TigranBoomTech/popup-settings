@@ -1,0 +1,27 @@
+.manageMarkersButton {
+  z-index: 1;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: white;
+  color: black;
+}
+
+.manageMarkersButton:hover {
+  color: white;
+}
+
+.showCenter {
+  z-index: 10;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  font-size: 28px;
+}
+
+.gm-style .gm-style-iw-t::after,
+.gm-style .gm-style-iw-c {
+  top: -40px !important;
+}

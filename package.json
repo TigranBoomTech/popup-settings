@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.6",
     "@wix/design-system": "^1.173.1",
     "@wix/wix-ui-icons-common": "^3.67.0",
     "axios": "^1.8.4",
     "boomform-builder": "^2.7.4",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-geocode": "^2.0.1",
     "sass": "^1.86.0",
     "scss": "^0.2.4"
   },

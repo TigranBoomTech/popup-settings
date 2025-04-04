@@ -5,7 +5,7 @@ import { addon_urls } from "../../helpers/addons/urls";
 import Addon from "./Addon/Addon";
 import axios from "axios";
 import classes from "./Addons.module.scss";
-import { comp_id, instance } from "../../helpers/common";
+import { getParameterByName } from "../../helpers/common";
 
 const Addons = () => {
   const [loading, setLoading] = useState(true);
@@ -75,7 +75,7 @@ const Addons = () => {
       addOnItem.installs++;
 
       const pushData = {
-        instance: instance,
+        instance: getParameterByName("instance"),
         name: addOnItem.name,
       };
 
@@ -105,7 +105,7 @@ const Addons = () => {
       addOnItem.installs++;
 
       const pushData = {
-        instance: instance,
+        instance: getParameterByName("instance"),
         name: addOnItem.name,
       };
 
@@ -148,7 +148,9 @@ const Addons = () => {
 
     axios.delete(
       import.meta.env.VITE_BOOMTECH_API +
-        `/addon?instance=${instance}&name=${addOnItem.name}`,
+        `/addon?instance=${getParameterByName("instance")}&name=${
+          addOnItem.name
+        }`,
       headers
     );
   };
@@ -169,8 +171,8 @@ const Addons = () => {
       axios.post(
         import.meta.env.VITE_BOOMTECH_API + `/addon`,
         {
-          instance: instance,
-          comp_id: comp_id,
+          instance: getParameterByName("instance"),
+          comp_id: Wix.Utils.getOrigCompId(),
           name: addOnItem.name,
           value: JSON.parse(addOnItem.default_value),
         },

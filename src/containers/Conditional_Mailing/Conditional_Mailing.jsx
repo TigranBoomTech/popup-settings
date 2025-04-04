@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { headers, user_url } from "../../helpers/common";
+import { getParameterByName, headers, user_url } from "../../helpers/common";
 import { debounce } from "../../helpers/conditional_mailing/debounce";
 import { checkCondition } from "../../helpers/conditional_mailing/check_condition";
 import {
@@ -62,15 +62,12 @@ const Conditional_Mailing = () => {
         if (count) {
           return --count;
         }
-        const urlParams = new URLSearchParams(window.location.search);
-        const comp_id = urlParams.get("origCompId");
-        const instance = urlParams.get("instance");
 
         axios.post(
           import.meta.env.VITE_BOOMTECH_API + "/addon",
           {
-            instance: instance,
-            comp_id: comp_id,
+            instance: getParameterByName("instance"),
+            comp_id: Wix.Utils.getOrigCompId(),
             name: "ConditionalMailing",
             value: filteredConditions,
           },
