@@ -9,7 +9,14 @@ import {
 import { setKey, fromLatLng, fromAddress } from "react-geocode";
 import { getParameterByName } from "../../helpers/common";
 import Markers from "./Markers/Markers";
-import { Button, Text } from "@wix/design-system";
+import {
+  Box,
+  Button,
+  EmptyState,
+  Loader,
+  Page,
+  Text,
+} from "@wix/design-system";
 import classes from "./Map.module.scss";
 
 const libraries = ["places"];
@@ -66,6 +73,8 @@ const Map = () => {
     }
   }, []);
 
+  // Decomment
+
   // useEffect(() => {
   //   Wix.Data.Public.set(
   //     "startCounter",
@@ -90,9 +99,6 @@ const Map = () => {
   const onMapLoad = useCallback((map) => {
     mapRef.current = map;
   }, []);
-
-  if (loadError) return "Error loading maps";
-  if (!isLoaded) return "Loading Maps";
 
   const handleMarkerDragEnd = (e, marker, index) => {
     let newMarkers = [...markers];
@@ -256,7 +262,30 @@ const Map = () => {
     }
   };
 
-  return (
+  const page = (children) => {
+    return (
+      <Page className={classes.map_page}>
+        <Page.Header title="Map" size="large" />
+        <Page.Content>{children}</Page.Content>
+      </Page>
+    );
+  };
+
+  return loadError ? (
+    page(
+      <EmptyState
+        className={classes.map_empty_state}
+        title="Error Loading Map"
+        subtitle="Please check your internet connection."
+      />
+    )
+  ) : !isLoaded ? (
+    page(
+      <Box className={classes.map_loader}>
+        <Loader statusMessage="Uploading" />
+      </Box>
+    )
+  ) : (
     <div className={classes.map} onKeyUp={(e) => handlekeyPress(e)}>
       <GoogleMap
         mapContainerStyle={mapStyles}
