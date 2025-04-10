@@ -131,6 +131,7 @@ const Templates = () => {
                 return (
                   <Cell span={4}>
                     <Template
+                      key={template.id}
                       isUserPremium={user.premium}
                       entries={user.subs}
                       template={template}
