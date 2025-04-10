@@ -1,23 +1,29 @@
 import React from "react";
-import { Box, Card, Page } from "@wix/design-system";
+import { Box, Button, Card, Page } from "@wix/design-system";
 import Show from "./Show/Show";
 import Hide from "./Hide/Hide";
+import classes from './Show_Hide.module.scss';
 
-const Show_Hide = ({ onActionClick }) => {
+const Show_Hide = ({ onActionClick, displayStatements, back }) => {
   return (
-    <Page>
-      <Page.Header
-        title="Actions"
-        subtitle="Choose whenever to Show or Hide field if the condition is true"
-        size="large"
-      />
-      <Page.Content>
-        <Box direction="horizontal" gap="24px">
+    // <Page className={classes.show_hide_page}>
+    //   <Page.Header
+    //     title="Actions"
+    //     subtitle="Choose whenever to Show or Hide field if the condition is true"
+    //     size="large"
+    //   />
+    //   <Page.Content>
+        <Box direction="vertical" gap="24px">
           <Show onActionClick={onActionClick} />
           <Hide onActionClick={onActionClick} />
         </Box>
-      </Page.Content>
-    </Page>
+    //     {back && (
+    //       <Box marginTop="24px">
+    //         <Button onClick={() => displayStatements()}>Back</Button>
+    //       </Box>
+    //     )}
+    //   </Page.Content>
+    // </Page>
   );
 };
 

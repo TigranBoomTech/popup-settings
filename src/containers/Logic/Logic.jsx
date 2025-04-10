@@ -9,6 +9,7 @@ import type_texts from "../../helpers/logic/type_texts";
 import conditions_names from "../../helpers/logic/conditions_names";
 import { getParameterByName } from "../../helpers/common";
 import Show_Hide from "./Show_Hide/Show_Hide";
+import { Button } from "@wix/design-system";
 
 const Logic = () => {
   const pushData = {
@@ -259,9 +260,17 @@ const Logic = () => {
   };
 
   return (
-    <div className={"bma_logic_parent"} id={"bma_slide_parent"}>
-      {compsToDisplay.actionComps && (
-        <Show_Hide onActionClick={onActionClick} />
+    <>
+      {/* {compsToDisplay.actionComps && (
+        <Show_Hide
+          onActionClick={onActionClick}
+          displayStatements={displayStatements}
+          back={
+            logicFields[0] &&
+            logicFields[0].condition.length > 0 &&
+            compsToDisplay.actionComps
+          }
+        />
       )}
 
       {compsToDisplay.chooseField && (
@@ -276,9 +285,9 @@ const Logic = () => {
           changeView={changeView}
           excludeHiddenFields={excludeHiddenFields}
         />
-      )}
+      )} */}
 
-      {compsToDisplay.statementsList && (
+      {/* {compsToDisplay.statementsList && ( */}
         <Statements
           logicFields={logicFields}
           addNewLogicValue={addNewLogicValue}
@@ -290,16 +299,8 @@ const Logic = () => {
           addNewConditionValue={addNewConditionValue}
           deleteLogic={deleteLogic}
         />
-      )}
-
-      {logicFields[0] &&
-        logicFields[0].condition.length > 0 &&
-        compsToDisplay.actionComps && (
-          <div onClick={() => displayStatements()} className={"bma_back"}>
-            back
-          </div>
-        )}
-    </div>
+      {/* )} */}
+    </>
   );
 };
 
