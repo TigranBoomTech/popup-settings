@@ -103,7 +103,7 @@ const Template = (props) => {
         }}
         title={props.template.name}
         subtitle={props.template.form_desc}
-        badge={<Badge skin="neutralStandard">{props.template.form_type}</Badge>}
+        badge={<Badge skin="neutralStandard">{props.template.industry}</Badge>}
         suffix={<WixForms />}
       />
       <Modal

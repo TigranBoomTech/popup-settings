@@ -158,7 +158,7 @@ const Templates = () => {
         <SidePanel title="Filter" onCloseButtonClick={closePanel}>
           <SidePanel.Header title="Filter" />
           <SidePanel.Content>
-            {filteredTemplates.length > 0 ? (
+            {templates.length > 0 ? (
               <>
                 {" "}
                 <Search
