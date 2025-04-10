@@ -6,24 +6,26 @@ import classes from './Show_Hide.module.scss';
 
 const Show_Hide = ({ onActionClick, displayStatements, back }) => {
   return (
-    // <Page className={classes.show_hide_page}>
-    //   <Page.Header
-    //     title="Actions"
-    //     subtitle="Choose whenever to Show or Hide field if the condition is true"
-    //     size="large"
-    //   />
-    //   <Page.Content>
+    <Page>
+      <Page.Header
+        title="Actions"
+        subtitle="Choose whenever to Show or Hide field if the condition is true"
+        size="large"
+      />
+      <Page.Content>
+
         <Box direction="vertical" gap="24px">
           <Show onActionClick={onActionClick} />
           <Hide onActionClick={onActionClick} />
         </Box>
-    //     {back && (
-    //       <Box marginTop="24px">
-    //         <Button onClick={() => displayStatements()}>Back</Button>
-    //       </Box>
-    //     )}
-    //   </Page.Content>
-    // </Page>
+        {back && (
+          <Box marginTop="24px">
+            <Button onClick={() => displayStatements()}>Back</Button>
+          </Box>
+        )}
+      </Page.Content>
+    </Page>
+
   );
 };
 

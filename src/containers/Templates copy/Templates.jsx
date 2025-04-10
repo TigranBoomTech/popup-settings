@@ -157,79 +157,88 @@ const Templates = () => {
         <SidePanel title="Filter" onCloseButtonClick={closePanel}>
           <SidePanel.Header title="Filter" />
           <SidePanel.Content>
-            <Search
-              placeholder="Search templates ..."
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-
-            <Box gap="10" className={classes.filters_box}>
-              <Box direction="vertical">
-                <Text weight="bold" className={classes.industry_filter}>
-                  Industry
-                </Text>
-                <Box
-                  gap="1"
-                  direction="vertical"
-                  className={classes.filters_box}
-                >
-                  {industry_options.map((type) => {
-                    return (
-                      <Checkbox
-                        key={type.id}
-                        id={type.id}
-                        size="medium"
-                        checked={industries.includes(type.value)}
-                        onChange={() => handleIndustryChagne(type.value)}
-                      >
-                        {type.value}
-                      </Checkbox>
-                    );
-                  })}
+            {filteredTemplates.length > 0 ? (
+              <>
+                {" "}
+                <Search
+                  placeholder="Search templates ..."
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Box gap="10" className={classes.filters_box}>
+                  <Box direction="vertical">
+                    <Text weight="bold" className={classes.industry_filter}>
+                      Industry
+                    </Text>
+                    <Box
+                      gap="1"
+                      direction="vertical"
+                      className={classes.filters_box}
+                    >
+                      {industry_options.map((type) => {
+                        return (
+                          <Checkbox
+                            key={type.id}
+                            id={type.id}
+                            size="medium"
+                            checked={industries.includes(type.value)}
+                            onChange={() => handleIndustryChagne(type.value)}
+                          >
+                            {type.value}
+                          </Checkbox>
+                        );
+                      })}
+                    </Box>
+                  </Box>
+                  <Box direction="vertical">
+                    <Text weight="bold" className={classes.form_type_filter}>
+                      Form Type
+                    </Text>
+                    <Box
+                      gap="1"
+                      direction="vertical"
+                      className={classes.filters_box}
+                    >
+                      {form_type_options.map((type) => {
+                        return (
+                          <Checkbox
+                            key={type.id}
+                            id={type.id}
+                            size="medium"
+                            checked={formTypes.includes(type.value)}
+                            onChange={() => handleFormTypeChange(type.value)}
+                          >
+                            {type.value}
+                          </Checkbox>
+                        );
+                      })}
+                    </Box>
+                  </Box>
                 </Box>
-              </Box>
-              <Box direction="vertical">
-                <Text weight="bold" className={classes.form_type_filter}>
-                  Form Type
-                </Text>
-                <Box
-                  gap="1"
-                  direction="vertical"
-                  className={classes.filters_box}
-                >
-                  {form_type_options.map((type) => {
-                    return (
-                      <Checkbox
-                        key={type.id}
-                        id={type.id}
-                        size="medium"
-                        checked={formTypes.includes(type.value)}
-                        onChange={() => handleFormTypeChange(type.value)}
-                      >
-                        {type.value}
-                      </Checkbox>
-                    );
-                  })}
+                <Box direction="vertical" className={classes.sort_box}>
+                  <Text weight="bold" className={classes.sort_filter}>
+                    Sort By
+                  </Text>
+                  <Box direction="vertical" className={classes.sort_box}>
+                    <RadioGroup
+                      value={sort}
+                      onChange={(option) => setSort(option)}
+                    >
+                      {sort_options.map((type) => {
+                        return (
+                          <RadioGroup.Radio value={type.value}>
+                            {type.value}
+                          </RadioGroup.Radio>
+                        );
+                      })}
+                    </RadioGroup>
+                  </Box>
                 </Box>
-              </Box>
-            </Box>
-
-            <Box direction="vertical" className={classes.sort_box}>
-              <Text weight="bold" className={classes.sort_filter}>
-                Sort By
-              </Text>
-              <Box direction="vertical" className={classes.sort_box}>
-                <RadioGroup value={sort} onChange={(option) => setSort(option)}>
-                  {sort_options.map((type) => {
-                    return (
-                      <RadioGroup.Radio value={type.value}>
-                        {type.value}
-                      </RadioGroup.Radio>
-                    );
-                  })}
-                </RadioGroup>
-              </Box>
-            </Box>
+              </>
+            ) : (
+              <EmptyState title="No Templates Found" />
+            )}
           </SidePanel.Content>
+
           <SidePanel.Footer>
             <Button onClick={closePanel} priority="secondary" fullWidth>
               Close

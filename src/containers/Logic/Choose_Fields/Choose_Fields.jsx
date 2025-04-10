@@ -6,22 +6,7 @@ import ChooseValue from "../Choose_Value/Choose_Value";
 
 import slide_pages from "../../../helpers/logic/slide_pages";
 import type_texts from "../../../helpers/logic/type_texts";
-import {
-  addressFields,
-  nameFieldsNoMiddle,
-  nameFieldsMiddle,
-} from "../../../helpers/logic/fields";
-
-import {
-  defaultRules,
-  inputRules,
-  checkboxRules,
-  selectRules,
-  ratingRules,
-  fileRules,
-  termsRules,
-  countryRules,
-} from "../../../helpers/logic/rules";
+import { Box, Button, Card, Page, Text } from "@wix/design-system";
 
 import classes from "./Choose_Fields.module.scss";
 
@@ -233,6 +218,7 @@ export default function ChooseFields(props) {
         props.backToMainDrill();
         slide_pages("slideToRight", "bma_slide_parent");
         document.getElementsByClassName("bma_rule_text")[0].innerHTML = "";
+        props.closePanel();
         break;
       case 2:
         if (props.newField) {
@@ -316,39 +302,45 @@ export default function ChooseFields(props) {
   }
   
   let fieldsView = logicParams.fields.map((data, key) => (
-    <div key={key}>
-      <div
-        onClick={() => createLogic(data)}
-        field_id={data.id}
-        className={"bma_field f_" + data.type}
-        value={data.label}
-      >
-        {data.label}
-      </div>
-      {data.type === "address" &&
-        logicParams.step === 2 &&
-        logicParams.addressFieldsOpen && (
-          <div className={"bma_subfields_cont"}>
-            {displaySubFields(addressFields)}
-          </div>
-        )}
-      {data.type === "name" &&
-        logicParams.step === 2 &&
-        logicParams.nameFieldsOpen && (
-          <div className={"bma_subfields_cont"}>
-            {displaySubFields(logicParams.nameFields)}
-          </div>
-        )}
-    </div>
+    <Card key={key}>
+      <Card.Content>
+        <div
+          onClick={() => createLogic(data)}
+          field_id={data.id}
+          className={"bma_field f_" + data.type}
+          value={data.label}
+        >
+          <Text>{data.label}</Text>
+        </div>
+
+        {data.type === "address" &&
+          logicParams.step === 2 &&
+          logicParams.addressFieldsOpen && (
+            <div className={"bma_subfields_cont"}>
+              {displaySubFields(addressFields)}
+            </div>
+          )}
+        {data.type === "name" &&
+          logicParams.step === 2 &&
+          logicParams.nameFieldsOpen && (
+            <div className={"bma_subfields_cont"}>
+              {displaySubFields(logicParams.nameFields)}
+            </div>
+          )}
+      </Card.Content>
+    </Card>
   ));
   
   let logicsView = logicParams.rules.map((item, key) => (
-    <div key={key} onClick={() => createLogic(item)} className={"bma_field"}>
-      {item.title}
-    </div>
+    <Card key={key} className={"bma_field"}>
+      <div onClick={() => createLogic(item)}>{item.title}</div>
+    </Card>
   ));
 
-  let fieldToDisplay = logicParams.step === 3 ? logicsView : fieldsView;
+  const displayFields = () => {
+    return logicParams.step === 3 ? logicsView : fieldsView;
+  };
+
   function addNewCondition() {
     setLogicParams({
       ...logicParams,
@@ -370,65 +362,52 @@ export default function ChooseFields(props) {
   }
 
   return (
-    <Page className={classes.choose_fields_page}>
-      <Page.Header title="Choose Field" />
+    <Page className={classes.choose_field_page}>
+      <Page.Header title="Create Logic" />
       <Page.Content>
-        <Box className="bma_container" direction="vertical" gap="24px">
-          {logicParams.step !== 5 && (
-            <Box className="bma_slide_text" padding="small">
-              <Box className="bma_rule_desc">
-                <Text className="bma_rule_text" size="small" />
-              </Box>
-            </Box>
+        {logicParams.step !== 5 && (
+          <div className={"bma_rule_desc"}>
+            <Text size="medium" className={"bma_rule_text"} />
+          </div>
+        )}
+        <div id={"bma_slide_div"}>
+          {logicParams.step < 4 && (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(10, 1fr)",
+                gap: "12px",
+              }}
+            >
+              {displayFields()}
+            </div>
           )}
 
-          <Box id="bma_slide_div" direction="vertical">
-            {logicParams.step < 4 && (
-              <Box
-                className="bma_choose_fields bma-scroll"
-                direction="vertical"
-                align="center"
-                gap="20px"
-              >
-                <Heading>
-                  {logicParams.step === 1 && "Choose Field"}
-                  {logicParams.step === 2 && "Choose When Field"}
-                  {logicParams.step === 3 && "Choose Rule"}
-                </Heading>
+          {logicParams.step === 4 && (
+            <ChooseValue
+              toMainPage={props.backToMainDrill}
+              displayStatements={props.displayStatements}
+              logicParams={logicParams}
+              addNewCondition={addNewCondition}
+              paramsToSubmit={submitParState}
+              objIndex={objIndex}
+              condIndex={submitParState[objIndex].condition.length - 1}
+              createLogic={createLogic}
+              whenField={logicParams.selectedField2}
+              excludeHiddenFields={props.excludeHiddenFields}
+              closePanel={props.closePanel}
+            />
+          )}
+          {logicParams.step === 5 && (
+            <ChooseOperators
+              chooseStatementReq={chooseStatementReq}
+              back={back}
+            />
+          )}
+        </div>
+        <Box marginTop="24px">
+          <Button onClick={back}>Back</Button>
 
-                <Box width="390px" padding="20px">
-                  <Box
-                    className="bma_fields_list"
-                    style={{ maxHeight: "100%", marginBottom: "40px" }}
-                  >
-                    {fieldToDisplay}
-                  </Box>
-                </Box>
-              </Box>
-            )}
-
-            {logicParams.step === 4 && (
-              <ChooseValue
-                toMainPage={props.backToMainDrill}
-                displayStatements={props.displayStatements}
-                logicParams={logicParams}
-                addNewCondition={addNewCondition}
-                paramsToSubmit={submitParState}
-                objIndex={objIndex}
-                condIndex={submitParState[objIndex].condition.length - 1}
-                createLogic={createLogic}
-                whenField={logicParams.selectedField2}
-                excludeHiddenFields={props.excludeHiddenFields}
-              />
-            )}
-
-            {logicParams.step === 5 && (
-              <ChooseOperators
-                chooseStatementReq={chooseStatementReq}
-                back={back}
-              />
-            )}
-          </Box>
         </Box>
       </Page.Content>
     </Page>

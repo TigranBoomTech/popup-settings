@@ -9,7 +9,22 @@ import type_texts from "../../helpers/logic/type_texts";
 import conditions_names from "../../helpers/logic/conditions_names";
 import { getParameterByName } from "../../helpers/common";
 import Show_Hide from "./Show_Hide/Show_Hide";
-import { Button } from "@wix/design-system";
+import {
+  Box,
+  EmptyState,
+  IconButton,
+  Loader,
+  Page,
+  SidePanel,
+  Text,
+  TextButton,
+  ToggleSwitch,
+} from "@wix/design-system";
+
+import classes from "./Logic.module.scss";
+import { Add } from "@wix/wix-ui-icons-common";
+import Statement from "./Statements/Statement/Statement";
+
 
 const Logic = () => {
   const pushData = {
@@ -29,7 +44,9 @@ const Logic = () => {
   });
 
   const [logicFields, setLogicFields] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [layoutCount, setLayoutCount] = useState(0);
+  const [panel, setPanel] = useState(-600);
   const [excludeHiddenFields, setExcludeHiddenFields] = useState(false);
 
   const headers = {
@@ -70,6 +87,19 @@ const Logic = () => {
     }
   }, [compsToDisplay]);
 
+  const openPanel = () => {
+    setPanel(0);
+  };
+
+  const closePanel = (xBtn) => {
+    if (xBtn) {
+      let array = [...logicFields];
+      array.pop();
+      setLogicFields(array);
+    }
+    setPanel(-600);
+  };
+
   const onActionClick = (visibility) => {
     let array = [...logicFields];
     array.push({
@@ -88,6 +118,7 @@ const Logic = () => {
       statementIndex: array.length - 1,
     });
   };
+
   const changeView = () => {
     let number = layoutCount + 1;
     setLayoutCount(number);
@@ -111,8 +142,10 @@ const Logic = () => {
       chooseField: false,
       statementsList: true,
     });
+    closePanel();
     slide_pages("slideToRight", "bma_slide_parent");
   };
+
   const addNewLogicValue = () => {
     setCompsToDisplay({
       ...compsToDisplay,
@@ -122,6 +155,7 @@ const Logic = () => {
     });
     slide_pages("slideToLeft", "bma_slide_parent");
   };
+
   const backToMainDrill = () => {
     if (logicFields[0].condition.length > 0) {
       setCompsToDisplay({
@@ -139,6 +173,7 @@ const Logic = () => {
       });
     }
   };
+
   const getConditionName = (rule) => {
     let value;
     conditions_names.map((item) => {
@@ -201,6 +236,7 @@ const Logic = () => {
             }
           });
         }
+        setLoading(false);
       });
   };
 
@@ -260,47 +296,121 @@ const Logic = () => {
   };
 
   return (
-    <>
-      {/* {compsToDisplay.actionComps && (
-        <Show_Hide
-          onActionClick={onActionClick}
-          displayStatements={displayStatements}
-          back={
-            logicFields[0] &&
-            logicFields[0].condition.length > 0 &&
-            compsToDisplay.actionComps
+    <div className={classes.logic_container}>
+      <Page className={classes.statements_page}>
+        <Page.Header
+          title="Statements"
+          size="large"
+          actionsBar={
+            logicFields.length > 0 && (
+              <IconButton
+                size="medium"
+                onClick={() => {
+                  openPanel();
+                  addNewLogicValue();
+                }}
+              >
+                <Add />
+              </IconButton>
+            )
           }
         />
-      )}
 
-      {compsToDisplay.chooseField && (
-        <ChooseFields
-          backToMainDrill={backToMainDrill}
-          logicFields={logicFields}
-          displayStatements={displayStatements}
-          statementIndex={compsToDisplay.statementIndex}
-          fields={formFields}
-          newField={compsToDisplay.newField}
-          type={compsToDisplay.fieldVisibility}
-          changeView={changeView}
-          excludeHiddenFields={excludeHiddenFields}
-        />
-      )} */}
+        <Page.Content>
+          {loading ? (
+            <Box className={classes.statements_layout}>
+              <Loader statusMessage="Uploading" />
+            </Box>
+          ) : logicFields.length > 0 ? (
+            <Box direction="vertical">
+              <Box direction="horizontal" alignItems="center" gap={5}>
+                <Text>Exclude Hidden Fields</Text>
+                <ToggleSwitch
+                  label="Exclude Hidden Fields"
+                  checked={excludeHiddenFields}
+                  onChange={handleToggleChange}
+                />
+              </Box>
+              <Box className={classes.logics_layout}>
+                {logicFields.map((item, index) => (
+                  <Box key={index} className={classes.logics_grid_item}>
+                    <Statement
+                      item={item}
+                      index={index}
+                      getFieldById={getFieldById}
+                      getConditionName={getConditionName}
+                      deleteStatement={deleteStatement}
+                      addNewConditionValue={addNewConditionValue}
+                      deleteLogic={deleteLogic}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          ) : (
+            <EmptyState
+              className={classes.empty_state}
+              title="No Statements Found"
+              subtitle="Statements list is empty ! Start by adding your first statement"
+            >
+              <TextButton
+                prefixIcon={<Add />}
+                onClick={() => {
+                  openPanel();
+                  addNewLogicValue();
+                }}
+              >
+                Add Statement
+              </TextButton>
+            </EmptyState>
+          )}
+        </Page.Content>
+      </Page>
 
-      {/* {compsToDisplay.statementsList && ( */}
-        <Statements
-          logicFields={logicFields}
-          addNewLogicValue={addNewLogicValue}
-          excludeHiddenFields={excludeHiddenFields}
-          handleToggleChange={handleToggleChange}
-          getFieldById={getFieldById}
-          getConditionName={getConditionName}
-          deleteStatement={deleteStatement}
-          addNewConditionValue={addNewConditionValue}
-          deleteLogic={deleteLogic}
-        />
-      {/* )} */}
-    </>
+      <div
+        className={classes.logic_side_panel}
+        style={{
+          right: `${panel}px`,
+          width: panel === 0 ? "100vw" : "0px",
+        }}
+      >
+        <SidePanel
+          title="Statement"
+          onCloseButtonClick={() => closePanel(true)}
+          width="100vw"
+        >
+          <SidePanel.Header title="Statement" />
+          <SidePanel.Content>
+            {compsToDisplay.actionComps && (
+              <Show_Hide
+                onActionClick={onActionClick}
+                displayStatements={displayStatements}
+                back={
+                  logicFields[0] &&
+                  logicFields[0].condition.length > 0 &&
+                  compsToDisplay.actionComps
+                }
+              />
+            )}
+
+            {compsToDisplay.chooseField && (
+              <ChooseFields
+                backToMainDrill={backToMainDrill}
+                logicFields={logicFields}
+                displayStatements={displayStatements}
+                statementIndex={compsToDisplay.statementIndex}
+                fields={formFields}
+                newField={compsToDisplay.newField}
+                type={compsToDisplay.fieldVisibility}
+                changeView={changeView}
+                excludeHiddenFields={excludeHiddenFields}
+                closePanel={closePanel}
+              />
+            )}
+          </SidePanel.Content>
+        </SidePanel>
+      </div>
+    </div>
   );
 };
 
