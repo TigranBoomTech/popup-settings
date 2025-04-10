@@ -1,9 +1,13 @@
 import React, { useState } from "react";
+
+import { Box, Heading, Page, Text } from "@wix/design-system";
 import ChooseOperators from "../Choose_Operators/Choose_Operators";
 import ChooseValue from "../Choose_Value/Choose_Value";
+
 import slide_pages from "../../../helpers/logic/slide_pages";
 import type_texts from "../../../helpers/logic/type_texts";
 import { Box, Button, Card, Page, Text } from "@wix/design-system";
+
 import classes from "./Choose_Fields.module.scss";
 
 export default function ChooseFields(props) {
@@ -22,14 +26,7 @@ export default function ChooseFields(props) {
     nameFields: "",
   });
   const [submitParState, setSubmitParState] = useState(props.logicFields);
-  const addressFields = [
-    { title: "Street Address", value: "street" },
-    { title: "Street Address 2", value: "street2" },
-    { title: "City", value: "city" },
-    { title: "State/Region", value: "state" },
-    { title: "Postal/Zip Code", value: "postal" },
-    { title: "Country", value: "country" },
-  ];
+
   let objIndex = logicParams.statementIndex;
   function createLogic(field) {
     let text;
@@ -63,15 +60,8 @@ export default function ChooseFields(props) {
           let nameFields;
           nameFields =
             props.fields[objIndex].middleName === true
-              ? [
-                  { title: "First", value: "first" },
-                  { title: "Middle", value: "middle" },
-                  { title: "Last", value: "last" },
-                ]
-              : [
-                  { title: "First", value: "first" },
-                  { title: "Last", value: "last" },
-                ];
+              ? nameFieldsMiddle
+              : nameFieldsNoMiddle;
           setLogicParams({
             ...logicParams,
             nameFieldsOpen: !logicParams.nameFieldsOpen,
@@ -180,68 +170,31 @@ export default function ChooseFields(props) {
       case "date":
       case "time":
       case "price":
-        rules = [
-          { title: "is", value: "is" },
-          { title: "is not", value: "isnot" },
-          { title: "greater than", value: "greater" },
-          { title: "less than", value: "less" },
-        ];
+        rules = inputRules;
         break;
       case "checkbox":
-        rules = [
-          { title: "checked", value: "checked" },
-          { title: "not Checked", value: "dnotchecked" },
-          { title: "checked more than", value: "checkedmore" },
-          { title: "checked equal to", value: "checkedequal" },
-          { title: "checked less than", value: "checkedless" },
-          { title: "quantity equal", value: "quantityEqual" },
-          { title: "quantity less", value: "quantityLess" },
-          { title: "quantity more", value: "quantityMore" },
-        ];
+        rules = checkboxRules;
         break;
       case "radio":
       case "select":
-        rules = [
-          { title: "is", value: "is" },
-          { title: "is not", value: "isnot" },
-          { title: "quantity equal", value: "quantityEqual" },
-          { title: "quantity less", value: "quantityLess" },
-          { title: "quantity more", value: "quantityMore" },
-        ];
+        rules = selectRules;
         break;
       case "starrating":
       case "scalerating":
-        rules = [
-          { title: "greater than", value: "greater" },
-          { title: "less than", value: "less" },
-        ];
+        rules = ratingRules;
         break;
       case "file":
-        rules = ["chosen file", "Don't choose File"];
+        rules = fileRules;
         break;
       default:
-        rules = [
-          { title: "is", value: "is" },
-          { title: "is not", value: "isnot" },
-          { title: "contains", value: "contains" },
-          { title: "starts with", value: "starts" },
-          { title: "ends with", value: "ends" },
-          { title: "does not start", value: "doesNotStart" },
-          { title: "does not end", value: "doesNotEnd" },
-        ];
+        rules = defaultRules;
         break;
     }
     if (value.value === "country") {
-      rules = [
-        { title: "is", value: "is" },
-        { title: "is not", value: "isnot" },
-      ];
+      rules = countryRules;
     }
     if (value.fieldName === "terms") {
-      rules = [
-        { title: "checked", value: "checked" },
-        { title: "not Checked", value: "dnotchecked" },
-      ];
+      rules = termsRules;
     }
     return rules;
   }
@@ -347,6 +300,7 @@ export default function ChooseFields(props) {
     ));
     return subFiledWindow;
   }
+  
   let fieldsView = logicParams.fields.map((data, key) => (
     <Card key={key}>
       <Card.Content>
@@ -376,6 +330,7 @@ export default function ChooseFields(props) {
       </Card.Content>
     </Card>
   ));
+  
   let logicsView = logicParams.rules.map((item, key) => (
     <Card key={key} className={"bma_field"}>
       <div onClick={() => createLogic(item)}>{item.title}</div>
@@ -452,6 +407,7 @@ export default function ChooseFields(props) {
         </div>
         <Box marginTop="24px">
           <Button onClick={back}>Back</Button>
+
         </Box>
       </Page.Content>
     </Page>

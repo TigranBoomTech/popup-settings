@@ -1,9 +1,10 @@
 import React from "react";
 import { Box, Text, Card, Page, Button } from "@wix/design-system";
+import classes from "./Choose_Operators.module.scss";
 
 const ChooseOperators = ({ chooseStatementReq, back }) => {
   return (
-    <Page>
+    <Page className={classes.choose_operators_page}>
       <Page.Header title="Choose Operator" size="large" />
       <Page.Content>
         <Box direction="vertical" gap="24px">

@@ -5,12 +5,14 @@ import {
   EmptyState,
   IconButton,
   Page,
+  SidePanel,
   Text,
   TextButton,
   ToggleSwitch,
 } from "@wix/design-system";
 import { Add } from "@wix/wix-ui-icons-common";
 import Statement from "./Statement/Statement";
+import Show_Hide from "../Show_Hide/Show_Hide";
 
 const Statements = ({
   logicFields,
@@ -24,6 +26,17 @@ const Statements = ({
   deleteLogic,
   openPanel,
 }) => {
+  const [rightPanel, setRightPanel] = React.useState(-600);
+  //   const [loading, setLoading] = React.useState(true);
+
+  const openPanel = () => {
+    setRightPanel(0);
+  };
+
+  const closePanel = () => {
+    setRightPanel(-600);
+  };
+
   return (
     <Page className={classes.statements_page}>
       <Page.Header
@@ -70,28 +83,46 @@ const Statements = ({
                   </Box>
                 );
               })}
+
             </Box>
-          </Box>
-        ) : (
-          <EmptyState
-            className={classes.empty_state}
-            title="No Statements Found"
-            subtitle="Statements list is empty ! Start by adding your first statement"
-          >
-            {
-              <TextButton
-                prefixIcon={<Add />}
-                onClick={() => {
-                  addNewLogicValue();
-                }}
-              >
-                Add Statement
-              </TextButton>
-            }
-          </EmptyState>
-        )}
-      </Page.Content>
-    </Page>
+          ) : (
+            <EmptyState
+              className={classes.empty_state}
+              title="No Statements Found"
+              subtitle="Statements list is empty ! Start by adding your first statement"
+            >
+              {
+                <TextButton
+                  prefixIcon={<Add />}
+                  onClick={() => {
+                    openPanel();
+                  }}
+                >
+                  Add Statement
+                </TextButton>
+              }
+            </EmptyState>
+          )}
+        </Page.Content>
+      </Page>
+      <div
+        className={classes.statements_side_panel_container}
+        style={{
+          right: `${rightPanel}px`,
+        }}
+      >
+        <SidePanel
+          title="Statement"
+          onCloseButtonClick={closePanel}
+          width="600px"
+        >
+          <SidePanel.Header title="Statement" />
+          <SidePanel.Content>
+            <Show_Hide />
+          </SidePanel.Content>
+        </SidePanel>
+      </div>
+    </div>
   );
 };
 

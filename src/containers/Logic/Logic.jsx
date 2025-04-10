@@ -25,6 +25,7 @@ import classes from "./Logic.module.scss";
 import { Add } from "@wix/wix-ui-icons-common";
 import Statement from "./Statements/Statement/Statement";
 
+
 const Logic = () => {
   const pushData = {
     instance: getParameterByName("instance"),

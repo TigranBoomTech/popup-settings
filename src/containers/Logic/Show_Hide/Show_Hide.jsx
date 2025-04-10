@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Button, Card, Page } from "@wix/design-system";
 import Show from "./Show/Show";
 import Hide from "./Hide/Hide";
+import classes from './Show_Hide.module.scss';
 
 const Show_Hide = ({ onActionClick, displayStatements, back }) => {
   return (
@@ -12,6 +13,7 @@ const Show_Hide = ({ onActionClick, displayStatements, back }) => {
         size="large"
       />
       <Page.Content>
+
         <Box direction="vertical" gap="24px">
           <Show onActionClick={onActionClick} />
           <Hide onActionClick={onActionClick} />
@@ -23,6 +25,7 @@ const Show_Hide = ({ onActionClick, displayStatements, back }) => {
         )}
       </Page.Content>
     </Page>
+
   );
 };
 
