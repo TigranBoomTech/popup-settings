@@ -10,6 +10,45 @@
   font-style: normal;
 }
 
+.statements_page {
+  width: 100vw;
+  height: 100vh;
+
+  .empty_state {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.logics_layout {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 20px;
+
+  .logics_grid_item {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.logic_container {
+  display: block;
+  overflow: hidden;
+  position: relative;
+
+  .logic_side_panel {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    box-shadow: "0 3px 24px 0 rgba(22, 45, 61, 0.18), 0 8px 8px 0 rgba(22, 45, 61, 0.12)";
+    transition: right 0.4s ease 0s;
+    z-index: 1000;
+  }
+}
+
 .bma_choose_action,
 .bma_choose_fields,
 .bma_field,
@@ -121,13 +160,11 @@
   padding-bottom: 24px;
   min-height: 57px;
 }
+
 .bma_fields_list {
   background: #fff;
 }
 
-.bma_container {
-  background: #f0f4f7;
-}
 .bma_fields_list,
 .bma_cond_value {
   text-align-last: start;

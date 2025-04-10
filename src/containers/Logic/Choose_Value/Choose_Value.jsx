@@ -179,15 +179,16 @@ export default function ChooseValue(props) {
               <div className={"bma_save_add_buttons"}>
                 <span
                   className="bma_save_condition"
-                  onClick={() =>
+                  onClick={() => {
                     saveStatement(
                       String(
                         props.paramsToSubmit[props.objIndex].condition[
                           props.condIndex
                         ].value
                       )
-                    )
-                  }
+                    );
+                    props.closePanel();
+                  }}
                 >
                   Save Statement
                 </span>

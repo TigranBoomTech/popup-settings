@@ -22,6 +22,7 @@ const Statements = ({
   deleteStatement,
   addNewConditionValue,
   deleteLogic,
+  openPanel,
 }) => {
   return (
     <Page className={classes.statements_page}>
@@ -30,7 +31,13 @@ const Statements = ({
         size="large"
         actionsBar={
           logicFields.length > 0 && (
-            <IconButton size="medium" onClick={() => addNewLogicValue()}>
+            <IconButton
+              size="medium"
+              onClick={() => {
+                openPanel();
+                addNewLogicValue();
+              }}
+            >
               <Add />
             </IconButton>
           )
