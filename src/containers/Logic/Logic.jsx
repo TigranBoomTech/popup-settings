@@ -1,21 +1,22 @@
-import React, { Fragment, useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import axios from "axios";
 
-import { ToggleSwitch } from "@wix/design-system";
-import ShowHideComps from "./components/ShowHideComps";
-import ChooseFields from "./components/ChooseFields";
+import ChooseFields from "./Choose_Fields/Choose_Fields";
+import Statements from "./Statements/Statements";
 
 import slide_pages from "../../helpers/logic/slide_pages";
 import type_texts from "../../helpers/logic/type_texts";
 import conditions_names from "../../helpers/logic/conditions_names";
 import { getParameterByName } from "../../helpers/common";
+import Show_Hide from "./Show_Hide/Show_Hide";
 
-export default function Logic() {
+const Logic = () => {
   const pushData = {
     instance: getParameterByName("instance"),
     comp_id: Wix.Utils.getOrigCompId(),
     locale: "en",
   };
+
   const [formFields, setFormFields] = useState();
   const [compsToDisplay, setCompsToDisplay] = useState({
     actionComps: false,
@@ -25,6 +26,7 @@ export default function Logic() {
     newField: "",
     statementIndex: 0,
   });
+
   const [logicFields, setLogicFields] = useState([]);
   const [layoutCount, setLayoutCount] = useState(0);
   const [excludeHiddenFields, setExcludeHiddenFields] = useState(false);
@@ -36,6 +38,7 @@ export default function Logic() {
   useEffect(() => {
     getOptions();
   }, []);
+
   useEffect(() => {
     let array = logicFields;
     const filteredItems = array.filter(
@@ -66,7 +69,7 @@ export default function Logic() {
     }
   }, [compsToDisplay]);
 
-  function onActionClick(visibility) {
+  const onActionClick = (visibility) => {
     let array = [...logicFields];
     array.push({
       action: visibility,
@@ -83,12 +86,13 @@ export default function Logic() {
       newField: true,
       statementIndex: array.length - 1,
     });
-  }
-  function changeView() {
+  };
+  const changeView = () => {
     let number = layoutCount + 1;
     setLayoutCount(number);
-  }
-  function addNewCondValue(key) {
+  };
+
+  const addNewConditionValue = (key) => {
     setCompsToDisplay({
       ...compsToDisplay,
       actionComps: false,
@@ -97,8 +101,9 @@ export default function Logic() {
       newField: false,
       statementIndex: key,
     });
-  }
-  function displayStatements() {
+  };
+
+  const displayStatements = () => {
     setCompsToDisplay({
       ...compsToDisplay,
       actionComps: false,
@@ -106,8 +111,8 @@ export default function Logic() {
       statementsList: true,
     });
     slide_pages("slideToRight", "bma_slide_parent");
-  }
-  function addNewLogicValue() {
+  };
+  const addNewLogicValue = () => {
     setCompsToDisplay({
       ...compsToDisplay,
       actionComps: true,
@@ -115,8 +120,8 @@ export default function Logic() {
       statementsList: false,
     });
     slide_pages("slideToLeft", "bma_slide_parent");
-  }
-  function backToMainDrill() {
+  };
+  const backToMainDrill = () => {
     if (logicFields[0].condition.length > 0) {
       setCompsToDisplay({
         ...compsToDisplay,
@@ -132,8 +137,8 @@ export default function Logic() {
         statementsList: false,
       });
     }
-  }
-  function getCondName(rule) {
+  };
+  const getConditionName = (rule) => {
     let value;
     conditions_names.map((item) => {
       if (item.value === rule) {
@@ -141,8 +146,9 @@ export default function Logic() {
       }
     });
     return value;
-  }
-  function getOptions() {
+  };
+
+  const getOptions = () => {
     axios
       .get(import.meta.env.VITE_BOOMTECH_API + "/option", {
         headers: {
@@ -195,12 +201,14 @@ export default function Logic() {
           });
         }
       });
-  }
-  function getFieldById(formId) {
+  };
+
+  const getFieldById = (formId) => {
     const result = formFields.filter((x) => x.id == formId);
     return result && result[0] ? result[0].label : "";
-  }
-  function getPushLogic(array, exclude) {
+  };
+
+  const getPushLogic = (array, exclude) => {
     let pushLogic = {
       instance: getParameterByName("instance"),
       comp_id: Wix.Utils.getOrigCompId(),
@@ -212,9 +220,9 @@ export default function Logic() {
       },
     };
     return pushLogic;
-  }
+  };
 
-  function deleteLogic(value, key) {
+  const deleteLogic = (value, key) => {
     let array = [...logicFields];
     array.splice(key, 1);
     axios.post(
@@ -223,8 +231,9 @@ export default function Logic() {
       headers
     );
     setLogicFields(array);
-  }
-  function deleteStatement(key, condKey) {
+  };
+
+  const deleteStatement = (key, condKey) => {
     let array = [...logicFields];
     if (array[key].condition.length === 1) {
       array.splice(key, 1);
@@ -237,15 +246,7 @@ export default function Logic() {
       headers
     );
     setLogicFields(array);
-  }
-  function showDelIcon(key, condKey) {
-    document.getElementsByClassName("" + key + condKey + "")[0].style.display =
-      "block";
-  }
-  function hideDelIcon(key, condKey) {
-    document.getElementsByClassName("" + key + condKey + "")[0].style.display =
-      "none";
-  }
+  };
 
   const handleToggleChange = (e) => {
     const checked = e.target.checked;
@@ -260,33 +261,9 @@ export default function Logic() {
   return (
     <div className={"bma_logic_parent"} id={"bma_slide_parent"}>
       {compsToDisplay.actionComps && (
-        <Fragment>
-          <div className={"bma_choose_action"} id={"bma_slide_div"}>
-            <h3 className={"bma_page_title"}>Action</h3>
-            <h4 className={"bma_page_desc"}>
-              Choose whenever to Show or Hide field if the condition is true
-            </h4>
-            <ShowHideComps
-              onClick={onActionClick}
-              classNames={{
-                action: "bma_action show",
-                showIcon: "bma_show_icon",
-                showDesc: "bma_show_desc",
-              }}
-              fieldVisibility={"show"}
-            />
-            <ShowHideComps
-              onClick={onActionClick}
-              classNames={{
-                action: "bma_action hide",
-                showIcon: "bma_hide_icon",
-                showDesc: "bma_hide_desc",
-              }}
-              fieldVisibility={"hide"}
-            />
-          </div>
-        </Fragment>
+        <Show_Hide onActionClick={onActionClick} />
       )}
+
       {compsToDisplay.chooseField && (
         <ChooseFields
           backToMainDrill={backToMainDrill}
@@ -300,66 +277,21 @@ export default function Logic() {
           excludeHiddenFields={excludeHiddenFields}
         />
       )}
+
       {compsToDisplay.statementsList && (
-        <div className={"bma_ready_statements"} id={"bma_slide_div"}>
-          <h3 className={"bma_page_title"}>Statements</h3>
-          <ToggleSwitch
-            label="Exclude Hidden Fields"
-            checked={excludeHiddenFields}
-            onChange={handleToggleChange}
-          />
-          <div className={"bma_statements_list"}>
-            {logicFields.map((item, key) => (
-              <div key={key} className={"bma_statement"}>
-                <span
-                  className={"bma_add_cond"}
-                  onClick={() => addNewCondValue(key)}
-                  title="Add a New Condition"
-                ></span>
-                <span
-                  onClick={() => deleteLogic(item, key)}
-                  className={"bma_delete_statement"}
-                  title="Delete Statement"
-                ></span>
-                <div className={"bma_statement_header"}>
-                  {(item.action === "show" ? "Show" : "Hide") +
-                    " '" +
-                    getFieldById(item.field) +
-                    "' field if"}
-                </div>
-                {item.condition.map((condItem, condKey) => (
-                  <div
-                    key={condKey}
-                    className={"bma_conditions_rule"}
-                    onMouseEnter={() => showDelIcon(key, condKey)}
-                    onMouseLeave={() => hideDelIcon(key, condKey)}
-                  >
-                    <p className={"bma_cond_display"}>
-                      {"'" +
-                        getFieldById(condItem.field) +
-                        (condItem.item ? " " + condItem.item + "' " : "' ") +
-                        getCondName(condItem.rule) +
-                        " '" +
-                        condItem.value +
-                        "'"}{" "}
-                    </p>
-                    <span
-                      className={"bma_conditions_delete" + " " + key + condKey}
-                      onClick={() => deleteStatement(key, condKey)}
-                    />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div className="bmf-logic-add-button">
-            <a
-              className={"bma_add_new_statement"}
-              onClick={() => addNewLogicValue()}
-            >Saint Hov baaaaylus</a>
-          </div>
-        </div>
+        <Statements
+          logicFields={logicFields}
+          addNewLogicValue={addNewLogicValue}
+          excludeHiddenFields={excludeHiddenFields}
+          handleToggleChange={handleToggleChange}
+          getFieldById={getFieldById}
+          getConditionName={getConditionName}
+          deleteStatement={deleteStatement}
+          addNewConditionValue={addNewConditionValue}
+          deleteLogic={deleteLogic}
+        />
       )}
+
       {logicFields[0] &&
         logicFields[0].condition.length > 0 &&
         compsToDisplay.actionComps && (
@@ -369,4 +301,6 @@ export default function Logic() {
         )}
     </div>
   );
-}
+};
+
+export default Logic;

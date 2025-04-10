@@ -8,7 +8,7 @@ import { path } from "./helpers/common";
 
 function App() {
   let tempPath = path;
-  tempPath = "Logic";
+  tempPath = "Logic"; // For testing purposes
 
   return (
     <>

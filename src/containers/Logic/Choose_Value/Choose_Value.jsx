@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-import CountryList from "./CountryList";
-
+import CountriesList from "../Country_List/Country_List";
 import slide_pages from "../../../helpers/logic/slide_pages";
-import {getParameterByName} from "../../../helpers/common";
+import { getParameterByName } from "../../../helpers/common";
 
 export default function ChooseValue(props) {
   const [chooseValue, setChooseValue] = useState({
@@ -110,11 +109,19 @@ export default function ChooseValue(props) {
     ) {
       props.createLogic(item);
       props.displayStatements();
-      axios.post(process.env.BOOMTECH_API + `/addon`, pushData, headers);
+      axios.post(
+        import.meta.env.VITE_BOOMTECH_API + `/addon`,
+        pushData,
+        headers
+      );
       slide_pages("slideToLeft");
     } else {
       props.displayStatements();
-      axios.post(process.env.BOOMTECH_API + `/addon`, pushData, headers);
+      axios.post(
+        import.meta.env.VITE_BOOMTECH_API + `/addon`,
+        pushData,
+        headers
+      );
       slide_pages("slideToLeft");
     }
   }
@@ -209,7 +216,7 @@ export default function ChooseValue(props) {
               ))}
             </div>
           ) : (
-            <CountryList saveStatement={saveStatement} />
+            <CountriesList saveStatement={saveStatement} />
           )}
         </div>
       )}

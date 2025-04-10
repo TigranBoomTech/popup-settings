@@ -2,7 +2,8 @@
   width: 100vw;
   height: 100vh;
 
-  .empty_state {
+  .empty_state,
+  .conditional_mailing_layout {
     height: 80vh;
     display: flex;
     align-items: center;

@@ -184,7 +184,12 @@ const Addons = () => {
 
   return (
     <Page className={classes.addons_page}>
-      <Page.Header title="Addons" size="large" />
+      <Page.Header
+        title="Addons"
+        subtitle="Enhance your forms with powerful addons.
+Customize, automate, and extend your form’s functionality with easy-to-integrate tools designed to boost productivity and user experience."
+        size="large"
+      />
       <Page.Content>
         {loading ? (
           <Box className={classes.addons_loader}>

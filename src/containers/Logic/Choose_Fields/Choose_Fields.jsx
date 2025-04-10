@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ChooseOperators from "./ChooseOperators";
-import ChooseValue from "./ChooseValue";
+import ChooseOperators from "../Choose_Operators/Choose_Operators";
+import ChooseValue from "../Choose_Value/Choose_Value";
 import slide_pages from "../../../helpers/logic/slide_pages";
 import type_texts from "../../../helpers/logic/type_texts";
 
@@ -438,12 +438,15 @@ export default function ChooseFields(props) {
           />
         )}
         {logicParams.step === 5 && (
-          <ChooseOperators chooseStatementReq={chooseStatementReq} />
+          <ChooseOperators
+            chooseStatementReq={chooseStatementReq}
+            back={back}
+          />
         )}
       </div>
-      <div onClick={back} className={"bma_back"}>
+      {/* <div onClick={back} className={"bma_back"}>
         back
-      </div>
+      </div> */}
     </div>
   );
 }

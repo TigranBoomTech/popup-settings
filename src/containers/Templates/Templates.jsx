@@ -107,6 +107,7 @@ const Templates = () => {
       <Page className={classes.templates_page}>
         <Page.Header
           title="Templates"
+          subtitle="Evetything you need to get started quickly․"
           size="large"
           actionsBar={
             <Button

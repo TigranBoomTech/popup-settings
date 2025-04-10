@@ -1,0 +1,23 @@
+.statements_page {
+  width: 100vw;
+  height: 100vh;
+
+  .empty_state {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.logics_layout {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 20px;
+
+  .logics_grid_item {
+    display: flex;
+    flex-direction: column;
+  }
+}

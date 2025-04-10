@@ -97,15 +97,15 @@ const Conditional_Mailing = () => {
 
   return (
     <Page className={classes.conditional_mailing_page}>
-      <Page.Header title="Conditional Mailing" size="large" />
-      <Page.Content>
-        <Box maxWidth="800px">
-          {/* <Text>
-            Customize form communication effortlessly with Conditional Mailing.
+      <Page.Header
+        title="Conditional Mailing"
+        subtitle="Customize form communication effortlessly with Conditional Mailing.
             This addon allows administrators to set conditions based on user
-            input, ensuring tailored email notifications for specific scenarios.
-          </Text> */}
-        </Box>
+            input, ensuring tailored email notifications for specific scenarios."
+        size="large"
+      />
+      <Page.Content>
+        <Box maxWidth="800px"></Box>
         {loading ? (
           <Box className={classes.conditional_mailing_layout}>
             <Loader statusMessage="Uploading"></Loader>

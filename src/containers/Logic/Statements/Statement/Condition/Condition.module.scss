@@ -1,0 +1,26 @@
+.condition_wrapper {
+  .condition_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .condition_description {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .delete_icon {
+      visibility: hidden;
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &:hover .delete_icon {
+    visibility: visible;
+  }
+}

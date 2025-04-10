@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import country_list from "../../../helpers/logic/countries";
 import { AutoComplete } from "@wix/design-system";
 
-const CountryList = (props) => {
+const CountriesList = ({ saveStatement }) => {
   const [searchValue, setSearchValue] = useState("");
   const [selectedId, setSelectedId] = useState();
 
@@ -19,7 +19,7 @@ const CountryList = (props) => {
       onSelect={(country) => {
         setSelectedId(country.id);
         setSearchValue(country.label);
-        props.saveStatement(country.label);
+        saveStatement(country.label);
       }}
       onChange={(event) => setSearchValue(event.target.value)}
       predicate={(option) =>
@@ -29,4 +29,4 @@ const CountryList = (props) => {
   );
 };
 
-export default CountryList;
+export default CountriesList;
