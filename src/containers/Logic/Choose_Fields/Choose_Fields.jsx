@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-import { Box, Heading, Page, Text } from "@wix/design-system";
+import { Box, Button, Card, Page, Text } from "@wix/design-system";
 import ChooseOperators from "../Choose_Operators/Choose_Operators";
 import ChooseValue from "../Choose_Value/Choose_Value";
 
 import slide_pages from "../../../helpers/logic/slide_pages";
 import type_texts from "../../../helpers/logic/type_texts";
-import { Box, Button, Card, Page, Text } from "@wix/design-system";
-
+import { checkboxRules, countryRules, defaultRules, fileRules, inputRules, ratingRules, selectRules, termsRules,  } from "../../../helpers/logic/rules";
 import classes from "./Choose_Fields.module.scss";
+import { addressFields, nameFieldsMiddle, nameFieldsNoMiddle } from "../../../helpers/logic/fields";
 
 export default function ChooseFields(props) {
   const [logicParams, setLogicParams] = useState({
@@ -300,7 +300,7 @@ export default function ChooseFields(props) {
     ));
     return subFiledWindow;
   }
-  
+
   let fieldsView = logicParams.fields.map((data, key) => (
     <Card key={key}>
       <Card.Content>
@@ -330,7 +330,7 @@ export default function ChooseFields(props) {
       </Card.Content>
     </Card>
   ));
-  
+
   let logicsView = logicParams.rules.map((item, key) => (
     <Card key={key} className={"bma_field"}>
       <div onClick={() => createLogic(item)}>{item.title}</div>
@@ -407,7 +407,6 @@ export default function ChooseFields(props) {
         </div>
         <Box marginTop="24px">
           <Button onClick={back}>Back</Button>
-
         </Box>
       </Page.Content>
     </Page>

@@ -24,10 +24,8 @@ const Statements = ({
   deleteStatement,
   addNewConditionValue,
   deleteLogic,
-  openPanel,
 }) => {
   const [rightPanel, setRightPanel] = React.useState(-600);
-  //   const [loading, setLoading] = React.useState(true);
 
   const openPanel = () => {
     setRightPanel(0);
@@ -68,61 +66,46 @@ const Statements = ({
               />
             </Box>
             <Box className={classes.logics_layout}>
-              {logicFields.map((item, index) => {
-                return (
-                  <Box key={index} className={classes.logics_grid_item}>
-                    <Statement
-                      item={item}
-                      index={index}
-                      getFieldById={getFieldById}
-                      getConditionName={getConditionName}
-                      deleteStatement={deleteStatement}
-                      addNewConditionValue={addNewConditionValue}
-                      deleteLogic={deleteLogic}
-                    />
-                  </Box>
-                );
-              })}
-
+              {logicFields.map((item, index) => (
+                <Box key={index} className={classes.logics_grid_item}>
+                  <Statement
+                    item={item}
+                    index={index}
+                    getFieldById={getFieldById}
+                    getConditionName={getConditionName}
+                    deleteStatement={deleteStatement}
+                    addNewConditionValue={addNewConditionValue}
+                    deleteLogic={deleteLogic}
+                  />
+                </Box>
+              ))}
             </Box>
-          ) : (
-            <EmptyState
-              className={classes.empty_state}
-              title="No Statements Found"
-              subtitle="Statements list is empty ! Start by adding your first statement"
-            >
-              {
-                <TextButton
-                  prefixIcon={<Add />}
-                  onClick={() => {
-                    openPanel();
-                  }}
-                >
-                  Add Statement
-                </TextButton>
-              }
-            </EmptyState>
-          )}
-        </Page.Content>
-      </Page>
+          </Box>
+        ) : (
+          <EmptyState
+            className={classes.empty_state}
+            title="No Statements Found"
+            subtitle="Statements list is empty! Start by adding your first statement"
+          >
+            <TextButton prefixIcon={<Add />} onClick={openPanel}>
+              Add Statement
+            </TextButton>
+          </EmptyState>
+        )}
+      </Page.Content>
+
       <div
         className={classes.statements_side_panel_container}
-        style={{
-          right: `${rightPanel}px`,
-        }}
+        style={{ right: `${rightPanel}px` }}
       >
-        <SidePanel
-          title="Statement"
-          onCloseButtonClick={closePanel}
-          width="600px"
-        >
+        <SidePanel title="Statement" onCloseButtonClick={closePanel} width="600px">
           <SidePanel.Header title="Statement" />
           <SidePanel.Content>
             <Show_Hide />
           </SidePanel.Content>
         </SidePanel>
       </div>
-    </div>
+    </Page>
   );
 };
 
