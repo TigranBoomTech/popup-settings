@@ -27,6 +27,7 @@ import {
   Delete,
   Notification,
   Confirm,
+  Time,
 } from "@wix/wix-ui-icons-common";
 import classes from "./Condition.module.scss";
 
@@ -321,6 +322,7 @@ const Condition = ({
             <DatePicker
               className={classes.date_picker}
               value={fieldValue ? new Date(fieldValue) : null}
+              placeholderText="Pick Date"
               onChange={(value) => {
                 if (value) {
                   const formattedValue =
@@ -338,8 +340,9 @@ const Condition = ({
                   <Time />
                 </Input.Affix>
               }
+              placeholder="Pick Time"
               className={classes.time_picker}
-              step={60}
+              step={10}
               value={
                 fieldValue
                   ? (() => {

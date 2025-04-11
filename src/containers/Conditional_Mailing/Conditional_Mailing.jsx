@@ -113,9 +113,9 @@ const Conditional_Mailing = () => {
           </Box>
         ) : conditions.length > 0 ? (
           <Layout>
-            <Cell span={12}>
-              <Box width="100%">
-                <AddItem size="tiny" onClick={() => addCondition()}>
+            <Cell span={4}>
+              <Box width="100%" height="560px">
+                <AddItem size="small" onClick={() => addCondition()}>
                   Add New Condition
                 </AddItem>
               </Box>
@@ -137,7 +137,7 @@ const Conditional_Mailing = () => {
           </Layout>
         ) : (
           <Box width="100%" direction="vertical" gap={10}>
-            <AddItem size="tiny" onClick={() => addCondition()}>
+            <AddItem size="small" onClick={() => addCondition()}>
               Add New Condition
             </AddItem>
             <EmptyState

@@ -2,6 +2,11 @@
   width: 100vw;
   height: 100vh;
 
+  .new_condition_wrapper {
+    position: sticky !important;
+    top: 100px !important;
+  }
+
   .empty_state,
   .conditional_mailing_layout {
     height: 75vh;
