@@ -1,38 +1,37 @@
-// .fields_dropdown,
-// .conditions_dropdown,
-// .options_dropdown,
-// .date_picker,
-// .time_picker,
-// .dollar_input,
-// .cent_input,
-// .common_input,
-// .email_type_dropdown,
-// .toggle_container,
-// .form_emails_dropdown {
-//     width: 200px;
-// }
+.fields_dropdown,
+.conditions_dropdown,
+.options_dropdown,
+.date_picker,
+.time_picker,
+.dollar_input,
+.cent_input,
+.common_input,
+.email_type_dropdown,
+.form_emails_dropdown {
+  max-width: 400px;
+  width: 100%;
+}
+
+.toggle_container {
+  .segmented_toggle {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+    gap: 8px;
+  }
+}
 
 .condition_wrapper {
   .condition {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
+    flex-direction: column;
+    gap: 12px;
+    height: 450px;
   }
 
-  .buttons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
-
-    .add,
-    .remove {
-      cursor: pointer;
-      background-color: rgba(128, 128, 128, 0.2);
-      border-radius: 50%;
-      padding: 3px;
-    }
+  ․remove_condition_wrapper {
+    visibility: none;
+    width: 0px;
+    height: 0px;
   }
 }

@@ -3,17 +3,8 @@ import axios from "axios";
 import { getParameterByName, headers, user_url } from "../../helpers/common";
 import { debounce } from "../../helpers/conditional_mailing/debounce";
 import { checkCondition } from "../../helpers/conditional_mailing/check_condition";
-import {
-  Box,
-  Cell,
-  EmptyState,
-  Layout,
-  Loader,
-  Page,
-  TextButton,
-} from "@wix/design-system";
+import { AddItem, Box, Cell, Layout, Loader, Page } from "@wix/design-system";
 import classes from "./Conditional_Mailing.module.scss";
-import { Add } from "@wix/wix-ui-icons-common";
 import Condition from "./Condition/Condition";
 
 let count = 2;
@@ -112,20 +103,22 @@ const Conditional_Mailing = () => {
           </Box>
         ) : conditions.length > 0 ? (
           <Layout>
+            <Cell span={12}>
+              <Box width="100%">
+                <AddItem size="tiny" onClick={() => addCondition()}>
+                  Add New Condition
+                </AddItem>
+              </Box>
+            </Cell>
             {conditions.map((condition, index) => {
-              const isLast = index === conditions.length - 1;
               return (
-                <Cell span={12} key={index}>
+                <Cell span={4} key={`condition_${index}_${conditions.length}`}>
                   <Condition
                     index={index}
-                    isLast={isLast}
                     fields={fieldsData}
                     condition={condition}
-                    key={`condition_${index}_${condition.field}`}
-                    addCondition={addCondition}
                     removeCondition={removeCondition}
                     updateCondition={updateCondition}
-                    conditionsLength={conditions.length}
                     confirmationEmail={confirmationEmail}
                   />
                 </Cell>
@@ -133,22 +126,11 @@ const Conditional_Mailing = () => {
             })}
           </Layout>
         ) : (
-          <EmptyState
-            className={classes.empty_state}
-            title="No Conditions Found"
-            subtitle="Your list is empty ! Start by adding your first condition"
-          >
-            {
-              <TextButton
-                prefixIcon={<Add />}
-                onClick={() => {
-                  addCondition();
-                }}
-              >
-                Add Condition
-              </TextButton>
-            }
-          </EmptyState>
+          <Box width="100%">
+            <AddItem size="tiny" onClick={() => addCondition()}>
+              Add New Condition
+            </AddItem>
+          </Box>
         )}
       </Page.Content>
     </Page>

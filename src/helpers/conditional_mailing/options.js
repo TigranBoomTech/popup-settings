@@ -75,25 +75,3 @@ export const nameSubFields = [
     value: "last",
   },
 ];
-
-export const emailTypes = [
-  {
-    label: "Notification email",
-    value: "notification_email",
-  },
-  {
-    label: "Confirmation email",
-    value: "confirmation_email",
-  },
-];
-
-export const notificationEmailTypes = [
-  {
-    value: "custom_email",
-    label: "Custom Email",
-  },
-  {
-    value: "form_emails",
-    label: "Form Emails",
-  },
-];
