@@ -3,7 +3,15 @@ import axios from "axios";
 import { getParameterByName, headers, user_url } from "../../helpers/common";
 import { debounce } from "../../helpers/conditional_mailing/debounce";
 import { checkCondition } from "../../helpers/conditional_mailing/check_condition";
-import { AddItem, Box, Cell, Layout, Loader, Page } from "@wix/design-system";
+import {
+  AddItem,
+  Box,
+  Cell,
+  EmptyState,
+  Layout,
+  Loader,
+  Page,
+} from "@wix/design-system";
 import classes from "./Conditional_Mailing.module.scss";
 import Condition from "./Condition/Condition";
 
@@ -70,7 +78,9 @@ const Conditional_Mailing = () => {
   }, [conditions]);
 
   const addCondition = () => {
-    setConditions((prev) => [...prev, { field: "", value: "", email: "" }]);
+    let tempConditions = [...conditions];
+    tempConditions.unshift({ field: "", value: "", email: "" });
+    setConditions(tempConditions);
   };
 
   const removeCondition = (index) => {
@@ -126,10 +136,14 @@ const Conditional_Mailing = () => {
             })}
           </Layout>
         ) : (
-          <Box width="100%">
+          <Box width="100%" direction="vertical" gap={10}>
             <AddItem size="tiny" onClick={() => addCondition()}>
               Add New Condition
             </AddItem>
+            <EmptyState
+              title="There are no conditions yet"
+              subtitle="Add your first condition !"
+            />
           </Box>
         )}
       </Page.Content>

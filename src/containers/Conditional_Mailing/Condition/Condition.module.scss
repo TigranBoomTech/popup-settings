@@ -12,26 +12,7 @@
   width: 100%;
 }
 
-.toggle_container {
-  .segmented_toggle {
-    display: flex;
-    width: fit-content;
-    max-width: 100%;
-    gap: 8px;
-  }
-}
-
-.condition_wrapper {
-  .condition {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    height: 450px;
-  }
-
-  ․remove_condition_wrapper {
-    visibility: none;
-    width: 0px;
-    height: 0px;
-  }
+.condition {
+  gap: 10px;
+  height: 450px;
 }

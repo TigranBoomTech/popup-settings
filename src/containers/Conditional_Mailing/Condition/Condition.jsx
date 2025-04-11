@@ -283,7 +283,6 @@ const Condition = ({
               }}
             />
           )}
-          {/* <Text>field value </Text> */}
           <Dropdown
             className={classes.conditions_dropdown}
             prefix={
