@@ -21,7 +21,13 @@ import {
   IconButton,
 } from "@wix/design-system";
 import classes from "./Map.module.scss";
-import { Delete, Dismiss, More } from "@wix/wix-ui-icons-common";
+import {
+  Compose,
+  Delete,
+  Dismiss,
+  Location,
+  More,
+} from "@wix/wix-ui-icons-common";
 
 // Constants
 const MAP_API_KEY = "AIzaSyAnaT_v4wuB2p_9M2sbriWcIGD2gclaqAs";
@@ -256,50 +262,79 @@ const Map = () => {
         <Card.Divider />
 
         <Box direction="vertical" gap="20px" className={classes.markers_list}>
-          {markers.map((marker, index) => (
-            <Box direction="vertical" gap="6px" key={marker.id}>
-              <Box
-                width="100%"
-                direction="horizontal"
-                alignItems="center"
-                justifyContent="space-between"
-                alignSelf="flex-end"
-              >
-                <Text>Marker {index + 1}</Text>
-                <PopoverMenu
-                  triggerElement={
-                    <IconButton priority="secondary" size="small">
-                      <More />
-                    </IconButton>
-                  }
-                  size="small"
-                  appendTo="window"
-                >
-                  <PopoverMenu.MenuItem
-                    text="Delete"
-                    skin="destructive"
-                    onClick={() => handleDeleteMarker(marker.id)}
-                    prefixIcon={<Delete />}
+          {markers.length > 0 ? (
+            markers.map((marker, index) => (
+              <Box direction="vertical" gap="20px" key={marker.id}>
+                <Box direction="vertical" gap="6px">
+                  <Box
+                    width="100%"
+                    direction="horizontal"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    alignSelf="flex-end"
+                  >
+                    <Text>Marker {index + 1}</Text>
+                    <PopoverMenu
+                      triggerElement={
+                        <IconButton priority="secondary" size="small">
+                          <More />
+                        </IconButton>
+                      }
+                      size="small"
+                      appendTo="window"
+                    >
+                      <PopoverMenu.MenuItem
+                        text="Delete"
+                        skin="destructive"
+                        onClick={() => handleDeleteMarker(marker.id)}
+                        prefixIcon={<Delete />}
+                      />
+                    </PopoverMenu>
+                  </Box>
+                  <Input
+                    value={marker.value}
+                    placeholder="Location"
+                    onChange={(e) => handleInputChange(e, marker.id)}
+                    onBlur={(e) =>
+                      handleAddressUpdate(marker.id, e.target.value)
+                    }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleAddressUpdate(marker.id, e.target.value);
+                      }
+                    }}
+                    prefix={
+                      <Input.Affix>
+                        <Location />
+                      </Input.Affix>
+                    }
                   />
-                </PopoverMenu>
+                  <Input
+                    value={marker.description}
+                    placeholder="Description"
+                    onFocus={() => handleMarkerClick(marker)}
+                    onChange={(e) => handleDescriptionChange(e, marker.id)}
+                    prefix={
+                      <Input.Affix>
+                        <Compose />
+                      </Input.Affix>
+                    }
+                  />
+                </Box>
+                <Card.Divider />
               </Box>
-              <Input
-                value={marker.value}
-                onChange={(e) => handleInputChange(e, marker.id)}
-                onBlur={(e) => handleAddressUpdate(marker.id, e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleAddressUpdate(marker.id, e.target.value);
-                  }
-                }}
-              />
-              <InputArea
-                value={marker.description}
-                onFocus={() => handleMarkerClick(marker)}
-                onChange={(e) => handleDescriptionChange(e, marker.id)}
-              />
-            </Box>
-          ))}
+            ))
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text>There are no markers yet</Text>
+            </div>
+          )}
         </Box>
       </Box>
     </>
@@ -331,7 +366,6 @@ const Map = () => {
   }
 
   return <>{renderMapContent()}</>;
-  // return renderMapContent();
 };
 
 export default Map;
