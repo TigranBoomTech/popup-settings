@@ -11,12 +11,32 @@
   }
 }
 
+.markers_side_panel {
+  background-color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100%;
+  box-shadow: 0 3px 24px 0 rgba(22, 45, 61, 0.18),
+    0 8px 8px 0 rgba(22, 45, 61, 0.12);
+  transition: right 0.4s ease 0s;
+  border-radius: 0px !important;
+  z-index: 1000;
+
+  .markers_list {
+    padding: 10px 15px;
+    height: 80%;
+    overflow: scroll;
+  }
+}
+
 .manageMarkersButton {
   z-index: 1;
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: white;
+  background-color: rgb(203, 203, 203);
   color: black;
 }
 
@@ -37,4 +57,20 @@
 .gm-style .gm-style-iw-t::after,
 .gm-style .gm-style-iw-c {
   top: -40px !important;
+}
+
+.add_marker_btn,
+.manage_markers_btn {
+  position: absolute;
+  z-index: 10000;
+}
+
+.add_marker_btn {
+  right: 10px;
+  top: 10px;
+}
+
+.manage_markers_btn {
+  right: 130px;
+  top: 10px;
 }

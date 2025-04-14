@@ -1,352 +1,337 @@
-//libraries
-import React, { useState, useEffect, useRef, useCallback } from "react";
+// components/Map/Map.tsx
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   GoogleMap,
-  useLoadScript,
   Marker,
   InfoWindow,
+  useLoadScript,
 } from "@react-google-maps/api";
 import { setKey, fromLatLng, fromAddress } from "react-geocode";
-import { getParameterByName } from "../../helpers/common";
-import Markers from "./Markers/Markers";
 import {
   Box,
   Button,
+  Text,
+  Page,
   EmptyState,
   Loader,
-  Page,
-  Text,
+  Card,
+  Input,
+  InputArea,
+  PopoverMenu,
+  IconButton,
 } from "@wix/design-system";
 import classes from "./Map.module.scss";
+import { Delete, Dismiss, More } from "@wix/wix-ui-icons-common";
 
-const libraries = ["places"];
+// Constants
+const MAP_API_KEY = "AIzaSyAnaT_v4wuB2p_9M2sbriWcIGD2gclaqAs";
+setKey(MAP_API_KEY);
 
-const mapStyles = {
-  width: "100%",
-  height: "100vh",
+const LOCAL_KEYS = {
+  markers: "map_markers",
+  zoom: "map_zoom",
+  centerLat: "map_center_lat",
+  centerLng: "map_center_lng",
+  mapType: "map_type",
 };
+const DEFAULT_CENTER = { lat: -22.908333, lng: -43.196388 };
+const DEFAULT_ZOOM = 8;
+const MAP_LIBRARIES = ["places"];
+const MAP_CONTAINER_STYLE = { width: "100%", height: "100vh" };
 
 const Map = () => {
-  const [markers, setMarkers] = useState([
-    {
-      id: 1,
-      value: "Rio de Janeiro",
-      description: "Dream City",
-      position: { lat: -22.908333, lng: -43.196388 },
-    },
-  ]);
-  const [zoom, setZoom] = useState(8);
-  const [center, setCenter] = useState({ lat: -22.908333, lng: -43.196388 });
+  const [markers, setMarkers] = useState([]);
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  const [center, setCenter] = useState(DEFAULT_CENTER);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [mapType, setMapType] = useState("roadmap");
-  const [selected, setSelected] = useState(null);
-  const [isMarkersManagerOpen, setIsMarkersManagerOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    let defaultMarkerValues = JSON.parse(getParameterByName("markers"));
-    let myzoom = localStorage.getItem("zoom");
-    let mymapType = localStorage.getItem("mapTypeId");
-    let mycLat = localStorage.getItem("cLat");
-    let mycLng = localStorage.getItem("cLng");
-
-    myzoom ? setZoom(Number(myzoom)) : localStorage.setItem("zoom", zoom);
-    mymapType
-      ? setMapType(mymapType)
-      : localStorage.setItem("mapTypeId", mapType);
-    mycLat && mycLng
-      ? setCenter({ lat: parseFloat(mycLat), lng: parseFloat(mycLng) })
-      : (localStorage.setItem("cLat", center.lat),
-        localStorage.setItem("cLng", center.lng));
-    if (defaultMarkerValues && defaultMarkerValues.length) {
-      if (!mycLat && !mycLng) {
-        let newCenter = {
-          lat: defaultMarkerValues[0].position.lat,
-          lng: defaultMarkerValues[0].position.lng,
-        };
-        setCenter(newCenter);
-        localStorage.setItem("cLat", newCenter.lat);
-        localStorage.setItem("cLng", newCenter.lng);
-      }
-      setMarkers(defaultMarkerValues);
-      localStorage.setItem("markers", JSON.stringify(defaultMarkerValues));
-    } else {
-      localStorage.setItem("markers", JSON.stringify(markers));
-    }
-  }, []);
-
-  // Decomment
-
-  // useEffect(() => {
-  //   Wix.Data.Public.set(
-  //     "startCounter",
-  //     {
-  //       markers,
-  //       mapType,
-  //       zoom,
-  //       center,
-  //     },
-  //     { scope: "COMPONENT" }
-  //   );
-  // }, [markers, center, zoom, center]);
-
+  const mapRef = useRef(null);
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAnaT_v4wuB2p_9M2sbriWcIGD2gclaqAs",
-    libraries,
+    googleMapsApiKey: MAP_API_KEY,
+    libraries: MAP_LIBRARIES,
   });
 
-  setKey("AIzaSyAnaT_v4wuB2p_9M2sbriWcIGD2gclaqAs");
-  const mapRef = useRef();
-  const mapCenterText = useRef(null);
-  const onMapLoad = useCallback((map) => {
-    mapRef.current = map;
+  useEffect(() => {
+    const savedMarkers = JSON.parse(localStorage.getItem(LOCAL_KEYS.markers));
+    const savedZoom = localStorage.getItem(LOCAL_KEYS.zoom);
+    const savedLat = localStorage.getItem(LOCAL_KEYS.centerLat);
+    const savedLng = localStorage.getItem(LOCAL_KEYS.centerLng);
+    const savedType = localStorage.getItem(LOCAL_KEYS.mapType);
+
+    if (savedMarkers?.length) setMarkers(savedMarkers);
+    if (savedZoom) setZoom(Number(savedZoom));
+    if (savedLat && savedLng)
+      setCenter({ lat: parseFloat(savedLat), lng: parseFloat(savedLng) });
+    if (savedType) setMapType(savedType);
   }, []);
 
-  const handleMarkerDragEnd = (e, marker, index) => {
-    let newMarkers = [...markers];
-    let newMarker = { ...marker };
-    fromLatLng(e.latLng.lat(), e.latLng.lng()).then(
-      (response) => {
-        const address = response.results[0].formatted_address;
-        newMarker = {
-          ...newMarker,
-          value: address,
-          position: {
-            lat: e.latLng.lat(),
-            lng: e.latLng.lng(),
-          },
-        };
-        newMarkers.splice(index, 1, newMarker);
-        setMarkers(newMarkers);
-        localStorage.setItem("markers", JSON.stringify(newMarkers));
-        if (selected && selected.id === marker.id) {
-          setSelected(newMarker);
-        }
-      },
-      (error) => {
-        console.error(error);
-      }
+  const persistState = (key, value) => {
+    localStorage.setItem(
+      key,
+      typeof value === "string" ? value : JSON.stringify(value)
     );
   };
 
-  const handleAddNewMarker = () => {
-    const index = Date.now();
-    fromLatLng(center.lat, center.lng).then(
-      (response) => {
-        const address = response.results[0].formatted_address;
-        let newMarker = {
-          id: index,
-          value: address,
-          description: "",
-          position: center,
-        };
-        let newMarkers = [newMarker, ...markers];
-        setMarkers(newMarkers);
-        localStorage.setItem("markers", JSON.stringify(newMarkers));
-      },
-      (error) => {
-        console.error(error);
-      }
-    );
-  };
-
-  const handleDeleteMarker = (item, index) => {
-    let newMarkers = [...markers];
-    newMarkers.splice(index, 1);
-    if (selected && selected.id === item.id) {
-      setSelected(null);
-    }
-    setMarkers(newMarkers);
-    localStorage.setItem("markers", JSON.stringify(newMarkers));
-  };
-
-  const handleInputChange = (e, item, index, field) => {
-    const value = e.target.value;
-    switch (field) {
-      case "description":
-        let markersForDescr = [...markers];
-        markersForDescr[index] = {
-          ...markersForDescr[index],
-          description: value,
-        };
-        setSelected((selected) => {
-          return { ...selected, description: value };
-        });
-        setMarkers(markersForDescr);
-        localStorage.setItem("markers", JSON.stringify(markersForDescr));
-        break;
-      case "place":
-        let markersForPlace = [...markers];
-        markersForPlace[index] = { ...markersForPlace[index], value: value };
-        setMarkers(markersForPlace);
-        localStorage.setItem("markers", JSON.stringify(markersForPlace));
-        break;
-      default:
-        console.log("default case");
-        break;
+  const handleAddMarker = async () => {
+    try {
+      const response = await fromLatLng(center.lat, center.lng);
+      const address = response.results[0].formatted_address;
+      const newMarker = {
+        id: Date.now(),
+        value: address,
+        description: "",
+        position: center,
+      };
+      const updatedMarkers = [newMarker, ...markers];
+      setMarkers(updatedMarkers);
+      persistState(LOCAL_KEYS.markers, updatedMarkers);
+    } catch (err) {
+      console.error("Failed to geocode center:", err);
     }
   };
 
-  const handleMarkerManagerVisibility = (visible) => {
-    setIsMarkersManagerOpen(visible);
-  };
+  const handleMarkerDrag = async (e, marker, index) => {
+    try {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      const response = await fromLatLng(lat, lng);
+      const address = response.results[0].formatted_address;
 
-  const handleMapDragEnd = () => {
-    mapCenterText.current.style.display = "none";
-    if (mapRef.current && mapRef.current.center) {
-      let lat = mapRef.current.center.lat();
-      let lng = mapRef.current.center.lng();
-      localStorage.setItem("cLat", lat), localStorage.setItem("cLng", lng);
-      setCenter({ lat: parseFloat(lat), lng: parseFloat(lng) });
+      const updated = [...markers];
+      updated[index] = {
+        ...updated[index],
+        value: address,
+        position: { lat, lng },
+      };
+      setMarkers(updated);
+      persistState(LOCAL_KEYS.markers, updated);
+      console.log(updated);
+    } catch (err) {
+      console.error("Failed to update marker:", err);
     }
-  };
-
-  const handleMapDragStart = () => {
-    mapCenterText.current.style.display = "block";
   };
 
   const handleMarkerClick = (marker) => {
-    setSelected(marker);
-    localStorage.setItem("cLat", marker.position.lat),
-      localStorage.setItem("cLng", marker.position.lng);
+    setSelectedMarker(marker);
     setCenter(marker.position);
+    persistState(LOCAL_KEYS.centerLat, marker.position.lat);
+    persistState(LOCAL_KEYS.centerLng, marker.position.lng);
   };
 
-  const handleZoomChange = () => {
-    if (mapRef && mapRef.current) {
-      let newZoom = mapRef.current.zoom;
-      localStorage.setItem("zoom", newZoom);
-      setZoom(newZoom);
-    }
+  const handleDeleteMarker = (id) => {
+    const filtered = markers.filter((m) => m.id !== id);
+    setMarkers(filtered);
+    setSelectedMarker(null);
+    persistState(LOCAL_KEYS.markers, filtered);
   };
 
-  const handlekeyPress = (e) => {
-    if (
-      e &&
-      e.key === "Enter" &&
-      isMarkersManagerOpen &&
-      e.target.type == "text"
-    ) {
-      let newMarkers = [...markers];
-      let value = e.target.value;
-      let newMarkerIndex = newMarkers.findIndex(
-        (marker) => marker.value == value
-      );
-      fromAddress(value).then(
-        (response) => {
-          const { lat, lng } = response.results[0].geometry.location;
-          let newMarker = {
-            ...newMarkers[newMarkerIndex],
-            position: { lat, lng },
-          };
-          newMarkers.splice(newMarkerIndex, 1, newMarker);
-          setMarkers(newMarkers);
-          localStorage.setItem("markers", JSON.stringify(newMarkers));
-          setCenter({ lat: parseFloat(lat), lng: parseFloat(lng) });
-          localStorage.setItem("cLat", lat);
-          localStorage.setItem("cLng", lng);
-          if (selected) {
-            setSelected(newMarker);
-          }
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-    }
-  };
-
-  const handleMapTypeIdChange = () => {
-    if (mapRef && mapRef.current) {
-      let newMapType = mapRef.current.mapTypeId;
-      localStorage.setItem("mapTypeId", newMapType);
-      setMapType(newMapType);
-    }
-  };
-
-  const page = (children) => {
-    return (
-      <Page className={classes.map_page}>
-        <Page.Header title="Map" size="large" />
-        <Page.Content>{children}</Page.Content>
-      </Page>
+  const handleDescriptionChange = (e, markerId) => {
+    const value = e.target.value;
+    const updated = markers.map((m) =>
+      m.id === markerId ? { ...m, description: value } : m
     );
+    setMarkers(updated);
+    persistState(LOCAL_KEYS.markers, updated);
+    if (selectedMarker?.id === markerId) {
+      setSelectedMarker({ ...selectedMarker, description: value });
+    }
   };
 
-  return loadError ? (
-    page(
-      <EmptyState
-        className={classes.map_empty_state}
-        title="Error Loading Map"
-        subtitle="Please check your internet connection."
-      />
-    )
-  ) : !isLoaded ? (
-    page(
-      <Box className={classes.map_loader}>
-        <Loader statusMessage="Uploading" />
-      </Box>
-    )
-  ) : (
-    <div className={classes.map} onKeyUp={(e) => handlekeyPress(e)}>
+  const handleMapLoad = useCallback((map) => {
+    mapRef.current = map;
+  }, []);
+
+  const handleMapChange = () => {
+    if (!mapRef.current) return;
+    const { lat, lng } = mapRef.current.getCenter().toJSON();
+    const currentZoom = mapRef.current.getZoom();
+    const currentType = mapRef.current.getMapTypeId();
+
+    setCenter({ lat, lng });
+    setZoom(currentZoom);
+    setMapType(currentType);
+
+    persistState(LOCAL_KEYS.centerLat, lat);
+    persistState(LOCAL_KEYS.centerLng, lng);
+    persistState(LOCAL_KEYS.zoom, currentZoom);
+    persistState(LOCAL_KEYS.mapType, currentType);
+  };
+
+  const handleInputChange = (e, markerId) => {
+    const value = e.target.value;
+    const updated = markers.map((m) =>
+      m.id === markerId ? { ...m, value } : m
+    );
+    setMarkers(updated);
+  };
+
+  const handleAddressUpdate = async (markerId, address) => {
+    try {
+      const response = await fromAddress(address);
+      const location = response.results[0].geometry.location;
+
+      const updatedMarkers = markers.map((marker) =>
+        marker.id === markerId
+          ? {
+              ...marker,
+              value: address,
+              position: { lat: location.lat, lng: location.lng },
+            }
+          : marker
+      );
+
+      setMarkers(updatedMarkers);
+      persistState(LOCAL_KEYS.markers, updatedMarkers);
+
+      if (selectedMarker?.id === markerId) {
+        setSelectedMarker({
+          ...selectedMarker,
+          value: address,
+          position: { lat: location.lat, lng: location.lng },
+        });
+      }
+    } catch (err) {
+      console.error("Geocoding failed:", err);
+    }
+  };
+  const renderMapContent = () => (
+    <>
+      <Button
+        onClick={handleAddMarker}
+        size="small"
+        className={classes.add_marker_btn}
+      >
+        Add Marker
+      </Button>
+      <Button
+        onClick={() => setIsOpen(true)}
+        size="small"
+        className={classes.manage_markers_btn}
+      >
+        Manage Markers
+      </Button>
       <GoogleMap
-        mapContainerStyle={mapStyles}
-        zoom={zoom}
+        mapContainerStyle={MAP_CONTAINER_STYLE}
         center={center}
+        zoom={zoom}
         mapTypeId={mapType}
-        onLoad={onMapLoad}
-        onDragStart={handleMapDragStart}
-        onDragEnd={handleMapDragEnd}
-        onZoomChanged={handleZoomChange}
-        onMapTypeIdChanged={handleMapTypeIdChange}
+        onLoad={handleMapLoad}
+        onDragEnd={handleMapChange}
+        onZoomChanged={handleMapChange}
+        onMapTypeIdChanged={handleMapChange}
       >
         {markers.map((marker, index) => (
           <Marker
             key={marker.id}
             position={marker.position}
-            draggable={true}
+            draggable
             onClick={() => handleMarkerClick(marker)}
-            onDragEnd={(e) => handleMarkerDragEnd(e, marker, index)}
+            onDragEnd={(e) => handleMarkerDrag(e, marker, index)}
           />
         ))}
-        {selected ? (
+
+        {selectedMarker && (
           <InfoWindow
-            position={{
-              lat: selected.position.lat,
-              lng: selected.position.lng,
-            }}
-            onCloseClick={() => {
-              setSelected(null);
-            }}
+            position={selectedMarker.position}
+            onCloseClick={() => setSelectedMarker(null)}
           >
-            <Text>
-              <p>{selected.description}</p>
-            </Text>
+            <Box direction="vertical" gap="6px" width="200px">
+              <Text>{selectedMarker.value}</Text>
+              <Text weight="bold">{selectedMarker.description}</Text>
+            </Box>
           </InfoWindow>
-        ) : null}
+        )}
       </GoogleMap>
-      {isMarkersManagerOpen ? (
-        <Markers
-          markers={markers}
-          handleAddNewMarker={handleAddNewMarker}
-          handleDeleteMarker={handleDeleteMarker}
-          handleInputChange={handleInputChange}
-          handleMarkerManagerVisibility={handleMarkerManagerVisibility}
-          handleMarkerClick={handleMarkerClick}
-        />
-      ) : null}
-      <Button
-        className={classes.manageMarkersButton}
-        onClick={() => handleMarkerManagerVisibility(true)}
-        size="small"
+
+      <Box
+        className={classes.markers_side_panel}
+        style={{ display: isOpen ? "block" : "none" }}
       >
-        Manage Markers
-      </Button>
-      <div ref={mapCenterText} className={classes.showCenter}>
-        <Text size="medium" weight="bold">
-          It Will Be Your Map Center
-        </Text>
-      </div>
-    </div>
+        <Card.Header
+          title="Markers"
+          suffix={<Dismiss onClick={() => setIsOpen(false)} />}
+        />
+        <Card.Divider />
+
+        <Box direction="vertical" gap="20px" className={classes.markers_list}>
+          {markers.map((marker, index) => (
+            <Box direction="vertical" gap="6px" key={marker.id}>
+              <Box
+                width="100%"
+                direction="horizontal"
+                alignItems="center"
+                justifyContent="space-between"
+                alignSelf="flex-end"
+              >
+                <Text>Marker {index + 1}</Text>
+                <PopoverMenu
+                  triggerElement={
+                    <IconButton priority="secondary" size="small">
+                      <More />
+                    </IconButton>
+                  }
+                  size="small"
+                  appendTo="window"
+                >
+                  <PopoverMenu.MenuItem
+                    text="Delete"
+                    skin="destructive"
+                    onClick={() => handleDeleteMarker(marker.id)}
+                    prefixIcon={<Delete />}
+                  />
+                </PopoverMenu>
+              </Box>
+              <Input
+                value={marker.value}
+                onChange={(e) => handleInputChange(e, marker.id)}
+                onBlur={(e) => handleAddressUpdate(marker.id, e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleAddressUpdate(marker.id, e.target.value);
+                  }
+                }}
+              />
+              <InputArea
+                value={marker.description}
+                onFocus={() => handleMarkerClick(marker)}
+                onChange={(e) => handleDescriptionChange(e, marker.id)}
+              />
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    </>
   );
+
+  const renderPage = (children) => (
+    <Page className={classes.map_page}>
+      <Page.Header title="Interactive Map" />
+      <Page.Content>{children}</Page.Content>
+    </Page>
+  );
+
+  if (loadError) {
+    return renderPage(
+      <EmptyState
+        className={classes.map_empty_state}
+        title="Failed to Load Map"
+        subtitle="Check your internet or API key."
+      />
+    );
+  }
+
+  if (!isLoaded) {
+    return renderPage(
+      <Box className={classes.map_loader}>
+        <Loader statusMessage="Loading map..." />
+      </Box>
+    );
+  }
+
+  return <>{renderMapContent()}</>;
+  // return renderMapContent();
 };
 
 export default Map;

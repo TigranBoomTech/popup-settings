@@ -1,76 +1,90 @@
 import React from "react";
 import classes from "./Markers.module.scss";
-import { Box, Button, Input, InputArea, Text } from "@wix/design-system";
-import { Dismiss, Minus } from "@wix/wix-ui-icons-common";
+import {
+  AddItem,
+  Box,
+  Button,
+  Card,
+  IconButton,
+  Input,
+  InputArea,
+  PopoverMenu,
+  Text,
+} from "@wix/design-system";
+import { Delete, Dismiss, Minus, More } from "@wix/wix-ui-icons-common";
 
-const Markers = (props) => {
+const Markers = ({
+  markers,
+  handleAddNewMarker,
+  handleDeleteMarker,
+  handleInputChange,
+  handleMarkerClick,
+}) => {
   return (
     <Box direction="vertical" className={classes.manage_markers_container}>
-      <Box
-        direction="horizontal"
-        justifyContent="space-between"
-        alignItems="center"
-        className={classes.manage_markers_header}
-      >
-        <Text weight="bold" size="medium">
-          Markers
-        </Text>
-
-        <Dismiss
-          size="24px"
-          onClick={() => props.handleMarkerManagerVisibility(false)}
-        />
-      </Box>
       <Box direction="vertical" gap="20px" className={classes.markers}>
-        {props.markers.map((marker, index) => {
+        {markers.map((marker, index) => {
           return (
             <Box
-              direction="vertical"
-              className={classes.manage_marker_container}
               key={marker.id}
-              gap="10px"
+              border="1px dashed #5999FF"
+              borderRadius="12px"
+              padding="16px"
+              marginBottom="12px"
+              backgroundColor="white"
+              flexDirection="column"
             >
               <Box
+                display="flex"
                 alignItems="center"
                 justifyContent="space-between"
-                gap="10px"
-                direction="horizontal"
-                className={classes.positionContainer}
+                marginBottom="8px"
               >
+                <Box fontSize="18px" fontWeight="bold">
+                  <Text>{`Marker ${index + 1}`}</Text>
+                </Box>
+                <PopoverMenu
+                  textSize="small"
+                  triggerElement={
+                    <IconButton priority="secondary" size="small">
+                      <More />
+                    </IconButton>
+                  }
+                >
+                  <PopoverMenu.MenuItem
+                    skin="destructive"
+                    text="Delete"
+                    prefixIcon={<Delete />}
+                    onClick={() => handleDeleteMarker(marker, index)}
+                  />
+                </PopoverMenu>
+              </Box>
+
+              <Box display="flex" flexDirection="column" gap="12px">
                 <Input
+                  size="small"
+                  placeholder="Place"
                   value={marker.value}
-                  className={classes.marker_position_input}
+                  onChange={(e) => handleInputChange(e, marker, index, "place")}
+                />
+                <InputArea
+                  size="small"
+                  placeholder="Location description"
+                  value={marker.description}
+                  onFocus={() => {
+                    handleMarkerClick(marker);
+                  }}
                   onChange={(e) =>
-                    props.handleInputChange(e, marker, index, "place")
+                    handleInputChange(e, marker, index, "description")
                   }
                 />
-
-                <Minus
-                  cursor="pointer"
-                  onClick={() => props.handleDeleteMarker(marker, index)}
-                />
               </Box>
-              <InputArea
-                value={marker.description}
-                onFocus={() => {
-                  props.handleMarkerClick(marker);
-                }}
-                onChange={(e) =>
-                  props.handleInputChange(e, marker, index, "description")
-                }
-              />
             </Box>
           );
         })}
       </Box>
-      <Box width="100%">
-        <Button
-          onClick={() => props.handleAddNewMarker()}
-          size="small"
-          className={classes.new_marker_button}
-        >
-          Add New Marker
-        </Button>
+      <Box marginTop="20px">
+        <AddItem onClick={() => handleAddNewMarker()} />
       </Box>
     </Box>
   );

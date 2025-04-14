@@ -8,7 +8,7 @@ import { path } from "./helpers/common";
 
 function App() {
   let tempPath = path;
-  tempPath = "Conditional_Mailing"; // For testing purposes
+  tempPath = "Map_Modal"; // For testing purposes
 
   return (
     <>
