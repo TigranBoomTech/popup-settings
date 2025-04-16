@@ -1,30 +1,49 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-
-import ChooseFields from "./Choose_Fields/Choose_Fields";
-import Statements from "./Statements/Statements";
-
-import slide_pages from "../../helpers/logic/slide_pages";
-import type_texts from "../../helpers/logic/type_texts";
 import conditions_names from "../../helpers/logic/conditions_names";
 import { getParameterByName } from "../../helpers/common";
-import Show_Hide from "./Show_Hide/Show_Hide";
+
 import {
+  Accordion,
+  accordionItemBuilder,
+  AddItem,
   Box,
+  Card,
+  CustomModalLayout,
   EmptyState,
+  Heading,
   IconButton,
+  ListItemSelect,
   Loader,
+  Modal,
   Page,
+  PopoverMenu,
   SidePanel,
   Text,
   TextButton,
+  Thumbnail,
   ToggleSwitch,
 } from "@wix/design-system";
 
 import classes from "./Logic.module.scss";
-import { Add } from "@wix/wix-ui-icons-common";
-import Statement from "./Statements/Statement/Statement";
-
+import {
+  Add,
+  Adjust,
+  Delete,
+  Edit,
+  Hidden,
+  More,
+  Visible,
+} from "@wix/wix-ui-icons-common";
+import {
+  addressFields,
+  checkboxRules,
+  defaultRules,
+  fileRules,
+  inputRules,
+  ratingRules,
+  selectRules,
+} from "../../helpers/logic/rules";
 
 const Logic = () => {
   const pushData = {
@@ -43,11 +62,36 @@ const Logic = () => {
     statementIndex: 0,
   });
 
-  const [logicFields, setLogicFields] = useState([]);
+  const [logicStatements, setLogicStatements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [layoutCount, setLayoutCount] = useState(0);
-  const [panel, setPanel] = useState(-600);
   const [excludeHiddenFields, setExcludeHiddenFields] = useState(false);
+
+  const [conditionsPanel, setConditionsPanel] = useState(-440);
+  const [statementPanel, setStatementPanel] = useState(-440);
+  const [isAddConditionOpen, setIsAddConditionOpen] = useState(false);
+
+  const [currentStatement, setCurrentStatement] = useState(null);
+  const [newCondition, setNewCondition] = useState(null);
+
+  console.log("CURRENT", currentStatement);
+  console.log("CONDITION", newCondition);
+
+  const openConditionsPanel = () => {
+    setConditionsPanel(0);
+  };
+
+  const closeConditionsPanel = () => {
+    setConditionsPanel(-440);
+  };
+
+  const openStatementPanel = () => {
+    setStatementPanel(0);
+  };
+
+  const closeStatementPanel = () => {
+    setStatementPanel(-440);
+  };
 
   const headers = {
     headers: { PLATFORM: "_WIX" },
@@ -58,15 +102,15 @@ const Logic = () => {
   }, []);
 
   useEffect(() => {
-    let array = logicFields;
+    let array = logicStatements;
     const filteredItems = array.filter(
       (item) => item && item.condition && item.condition.length !== 0
     );
-    setLogicFields(filteredItems);
+    setLogicStatements(filteredItems);
   }, [compsToDisplay.statementsList]);
 
   useEffect(() => {
-    if (formFields != null && logicFields[0] == null) {
+    if (formFields != null && logicStatements[0] == null) {
       setCompsToDisplay({
         ...compsToDisplay,
         actionComps: true,
@@ -74,41 +118,17 @@ const Logic = () => {
         statementsList: false,
       });
     }
-  }, [logicFields]);
-
-  useLayoutEffect(() => {
-    if (compsToDisplay.chooseField) {
-      slide_pages("slideToLeft", "bma_slide_div");
-      let typeVisibility =
-        compsToDisplay.fieldVisibility === "show" ? "Show" : "Hide";
-      if (document.getElementsByClassName("bma_rule_text")[0]) {
-        type_texts(typeVisibility);
-      }
-    }
-  }, [compsToDisplay]);
-
-  const openPanel = () => {
-    setPanel(0);
-  };
-
-  const closePanel = (xBtn) => {
-    if (xBtn) {
-      let array = [...logicFields];
-      array.pop();
-      setLogicFields(array);
-    }
-    setPanel(-600);
-  };
+  }, [logicStatements]);
 
   const onActionClick = (visibility) => {
-    let array = [...logicFields];
+    let array = [...logicStatements];
     array.push({
       action: visibility,
       condition: [],
       field: "",
       operator: "and",
     });
-    setLogicFields(array);
+    setLogicStatements(array);
     setCompsToDisplay({
       ...compsToDisplay,
       actionComps: false,
@@ -143,7 +163,6 @@ const Logic = () => {
       statementsList: true,
     });
     closePanel();
-    slide_pages("slideToRight", "bma_slide_parent");
   };
 
   const addNewLogicValue = () => {
@@ -153,11 +172,10 @@ const Logic = () => {
       chooseField: false,
       statementsList: false,
     });
-    slide_pages("slideToLeft", "bma_slide_parent");
   };
 
   const backToMainDrill = () => {
-    if (logicFields[0].condition.length > 0) {
+    if (logicStatements[0].condition.length > 0) {
       setCompsToDisplay({
         ...compsToDisplay,
         actionComps: false,
@@ -201,7 +219,7 @@ const Logic = () => {
             if (item.name === "Logic") {
               if (Array.isArray(item.value)) {
                 if (item.value) {
-                  setLogicFields(
+                  setLogicStatements(
                     item.value.filter(
                       (item) =>
                         item && item.condition && item.condition.length !== 0
@@ -216,7 +234,7 @@ const Logic = () => {
                 }
               } else {
                 if (item.value?.conditions) {
-                  setLogicFields(
+                  setLogicStatements(
                     item.value.conditions.filter(
                       (item) =>
                         item && item.condition && item.condition.length !== 0
@@ -259,30 +277,52 @@ const Logic = () => {
     return pushLogic;
   };
 
-  const deleteLogic = (value, key) => {
-    let array = [...logicFields];
-    array.splice(key, 1);
+  const deleteLogic = (index) => {
+    let array = [...logicStatements];
+    array.splice(index, 1);
     axios.post(
       import.meta.env.VITE_BOOMTECH_API + `/addon`,
       getPushLogic(array),
       headers
     );
-    setLogicFields(array);
+    setLogicStatements(array);
   };
 
-  const deleteStatement = (key, condKey) => {
-    let array = [...logicFields];
-    if (array[key].condition.length === 1) {
-      array.splice(key, 1);
+  const deleteStatement = (conditionIndex) => {
+    const { statement, index } = currentStatement;
+    const updatedStatements = [...logicStatements];
+
+    if (!statement || typeof index !== "number") return;
+
+    if (statement.condition.length === 1) {
+      updatedStatements.splice(index, 1);
     } else {
-      array[key].condition.splice(condKey, 1);
+      const updatedConditions = statement.condition.filter(
+        (_, i) => i !== conditionIndex
+      );
+      updatedStatements[index] = {
+        ...statement,
+        condition: updatedConditions,
+      };
     }
+
     axios.post(
       import.meta.env.VITE_BOOMTECH_API + `/addon`,
-      getPushLogic(array),
+      getPushLogic(updatedStatements),
       headers
     );
-    setLogicFields(array);
+
+    setLogicStatements(updatedStatements);
+
+    if (updatedStatements[index]) {
+      setCurrentStatement({
+        statement: updatedStatements[index],
+        index,
+      });
+    } else {
+      setCurrentStatement(null);
+      closeConditionsPanel();
+    }
   };
 
   const handleToggleChange = (e) => {
@@ -290,23 +330,134 @@ const Logic = () => {
     setExcludeHiddenFields(checked);
     axios.post(
       import.meta.env.VITE_BOOMTECH_API + `/addon`,
-      getPushLogic(logicFields, checked),
+      getPushLogic(logicStatements, checked),
       headers
     );
   };
 
+  const getRules = () => {
+    const selectedField = formFields?.find(
+      (field) => field.id === newCondition?.fieldId
+    );
+
+    console.log("SELECTED", selectedField);
+    // if (selectedField?.fieldName === "terms"){
+
+    // }
+
+    switch (newCondition?.fieldType) {
+      case "number":
+      case "date":
+      case "time":
+      case "price":
+        return inputRules.map((rule) => (
+          <ListItemSelect
+            key={rule.value}
+            title={rule.title}
+            selected={newCondition?.rule === rule.value}
+            onClick={() =>
+              setNewCondition((prev) => ({
+                ...prev,
+                rule: rule?.value,
+              }))
+            }
+          />
+        ));
+      case "checkbox":
+        return checkboxRules.map((rule) => (
+          <ListItemSelect
+            key={rule.value}
+            title={rule.title}
+            selected={newCondition?.rule === rule.value}
+            onClick={() =>
+              setNewCondition((prev) => ({
+                ...prev,
+                rule: rule?.value,
+              }))
+            }
+          />
+        ));
+      case "radio":
+      case "select":
+        return selectRules.map((rule) => (
+          <ListItemSelect
+            key={rule.value}
+            title={rule.title}
+            selected={newCondition?.rule === rule.value}
+            onClick={() =>
+              setNewCondition((prev) => ({
+                ...prev,
+                rule: rule?.value,
+              }))
+            }
+          />
+        ));
+      case "starrating":
+      case "scalerating":
+        return ratingRules.map((rule) => (
+          <ListItemSelect
+            key={rule.value}
+            title={rule.title}
+            selected={newCondition?.rule === rule.value}
+            onClick={() =>
+              setNewCondition((prev) => ({
+                ...prev,
+                rule: rule?.value,
+              }))
+            }
+          />
+        ));
+      case "file":
+        return fileRules.map((rule) => (
+          <ListItemSelect
+            key={rule}
+            title={rule}
+            selected={newCondition?.rule === rule}
+            onClick={() =>
+              setNewCondition((prev) => ({
+                ...prev,
+                rule: rule,
+              }))
+            }
+          />
+        ));
+      default:
+        return defaultRules.map((rule) => (
+          <ListItemSelect
+            key={rule.value}
+            title={rule.title}
+            selected={newCondition?.rule === rule.value}
+            onClick={() =>
+              setNewCondition((prev) => ({
+                ...prev,
+                rule: rule?.value,
+              }))
+            }
+          />
+        ));
+    }
+  };
+
+  // const getSubFields = () => {
+  //   if (newCondition.fieldType === "address") {
+  //     return addressFields.map((field) => <ListItemSelect key={field.value} />);
+  //   }
+  // };
+
   return (
     <div className={classes.logic_container}>
+      {/* PAGE CONTENT */}
+
       <Page className={classes.statements_page}>
         <Page.Header
           title="Statements"
           size="large"
           actionsBar={
-            logicFields.length > 0 && (
+            logicStatements.length > 0 && (
               <IconButton
                 size="medium"
                 onClick={() => {
-                  openPanel();
+                  openStatementPanel();
                   addNewLogicValue();
                 }}
               >
@@ -321,8 +472,8 @@ const Logic = () => {
             <Box className={classes.statements_layout}>
               <Loader statusMessage="Uploading" />
             </Box>
-          ) : logicFields.length > 0 ? (
-            <Box direction="vertical">
+          ) : logicStatements.length > 0 ? (
+            <>
               <Box direction="horizontal" alignItems="center" gap={5}>
                 <Text>Exclude Hidden Fields</Text>
                 <ToggleSwitch
@@ -331,32 +482,62 @@ const Logic = () => {
                   onChange={handleToggleChange}
                 />
               </Box>
-              <Box className={classes.logics_layout}>
-                {logicFields.map((item, index) => (
-                  <Box key={index} className={classes.logics_grid_item}>
-                    <Statement
-                      item={item}
-                      index={index}
-                      getFieldById={getFieldById}
-                      getConditionName={getConditionName}
-                      deleteStatement={deleteStatement}
-                      addNewConditionValue={addNewConditionValue}
-                      deleteLogic={deleteLogic}
-                    />
+
+              <Box className={classes.statements_layout}>
+                {logicStatements.map((item, index) => (
+                  <Box key={index} direction="vertical">
+                    <Box className={classes.logics_layout}>
+                      <Card>
+                        <Card.Header
+                          title={`Statement ${index + 1}`}
+                          suffix={
+                            <PopoverMenu
+                              minWidth="240px"
+                              triggerElement={
+                                <IconButton priority="secondary" size="small">
+                                  <More />
+                                </IconButton>
+                              }
+                              size="small"
+                              appendTo="window"
+                            >
+                              <PopoverMenu.MenuItem
+                                text="Manage Conditions"
+                                prefixIcon={<Adjust />}
+                                onClick={() => {
+                                  setCurrentStatement({
+                                    statement: item,
+                                    index: index,
+                                  });
+                                  closeStatementPanel();
+                                  openConditionsPanel();
+                                }}
+                              />
+                              <PopoverMenu.MenuItem
+                                text="Delete Statement"
+                                skin="destructive"
+                                onClick={() => deleteLogic(index)}
+                                prefixIcon={<Delete />}
+                              />
+                            </PopoverMenu>
+                          }
+                        />
+                      </Card>
+                    </Box>
                   </Box>
                 ))}
               </Box>
-            </Box>
+            </>
           ) : (
             <EmptyState
               className={classes.empty_state}
               title="No Statements Found"
-              subtitle="Statements list is empty ! Start by adding your first statement"
+              subtitle="Statements list is empty! Start by adding your first statement"
             >
               <TextButton
                 prefixIcon={<Add />}
                 onClick={() => {
-                  openPanel();
+                  openStatementPanel();
                   addNewLogicValue();
                 }}
               >
@@ -367,49 +548,288 @@ const Logic = () => {
         </Page.Content>
       </Page>
 
+      {/* CONDITIONS SIDE PANEL */}
+
       <div
         className={classes.logic_side_panel}
         style={{
-          right: `${panel}px`,
-          width: panel === 0 ? "100vw" : "0px",
+          right: `${conditionsPanel}px`,
+        }}
+      >
+        <SidePanel
+          title="Manage Conditions"
+          onCloseButtonClick={() => closeConditionsPanel()}
+        >
+          <SidePanel.Header title="Manage Conditions" />
+
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            direction="vertical"
+            gap="20px"
+            padding="20px"
+            background="white"
+          >
+            <Text weight="bold" textAlign="center">
+              {currentStatement?.statement?.action?.charAt(0)?.toUpperCase() +
+                currentStatement?.statement?.action?.slice(1)}
+              {"  "}
+              {
+                formFields?.find(
+                  (field) => field.id === currentStatement?.statement?.field
+                )?.label
+              }{" "}
+              If
+            </Text>
+          </Box>
+          <Box
+            direction="vertical"
+            style={{ height: "100vh", overflow: "scroll" }}
+          >
+            {currentStatement?.statement?.condition?.length > 0 ? (
+              currentStatement.statement.condition.map((condition, index) => {
+                const field = formFields.find(
+                  (field) => field.id === condition.field
+                );
+
+                const conditionValue =
+                  typeof condition.value === "object"
+                    ? Object.values(condition.value).concat()
+                    : condition.value;
+
+                console.log(conditionValue);
+
+                return (
+                  <Card
+                    key={`Condition-${index}-${currentStatement?.statement.condition.length} `}
+                  >
+                    <Card.Divider />
+                    <Box
+                      alignItems="center"
+                      justifyContent="space-between"
+                      padding="15px 10px"
+                      gap={5}
+                    >
+                      <Box wordBreak="break-word">
+                        <Text>
+                          {`${field.label} ${condition.rule} ${conditionValue}`}
+                        </Text>
+                      </Box>
+
+                      <Box gap={2}>
+                        <Edit
+                          cursor="pointer"
+                          cnClick={() => {
+                            console.log("Edit");
+                          }}
+                        />
+                        <Delete
+                          cursor="pointer"
+                          className={classes.delete}
+                          onClick={() => {
+                            deleteStatement(currentStatement.index);
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                  </Card>
+                );
+              })
+            ) : (
+              <Box
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text textAlign="center">
+                  No Conditions found for this statement
+                </Text>
+              </Box>
+            )}
+          </Box>
+          <Box
+            direction="vertical"
+            gap="20px"
+            padding="20px"
+            background="white"
+          >
+            <AddItem size="tiny" onClick={() => setIsAddConditionOpen(true)}>
+              Add Condition
+            </AddItem>
+          </Box>
+        </SidePanel>
+      </div>
+
+      {/* CREATE NEW LOGIC SIDE PANEL */}
+
+      <div
+        className={classes.logic_side_panel}
+        style={{
+          right: `${statementPanel}px`,
         }}
       >
         <SidePanel
           title="Statement"
-          onCloseButtonClick={() => closePanel(true)}
-          width="100vw"
+          onCloseButtonClick={() => closeStatementPanel()}
         >
           <SidePanel.Header title="Statement" />
           <SidePanel.Content>
-            {compsToDisplay.actionComps && (
-              <Show_Hide
-                onActionClick={onActionClick}
-                displayStatements={displayStatements}
-                back={
-                  logicFields[0] &&
-                  logicFields[0].condition.length > 0 &&
-                  compsToDisplay.actionComps
-                }
-              />
-            )}
-
-            {compsToDisplay.chooseField && (
-              <ChooseFields
-                backToMainDrill={backToMainDrill}
-                logicFields={logicFields}
-                displayStatements={displayStatements}
-                statementIndex={compsToDisplay.statementIndex}
-                fields={formFields}
-                newField={compsToDisplay.newField}
-                type={compsToDisplay.fieldVisibility}
-                changeView={changeView}
-                excludeHiddenFields={excludeHiddenFields}
-                closePanel={closePanel}
-              />
-            )}
+            <Accordion
+              items={[
+                accordionItemBuilder({
+                  title: "Action",
+                  children: (
+                    <Box direction="horizontal" gap="10px">
+                      <Thumbnail
+                        size="tiny"
+                        hideSelectedIcon
+                        height={54}
+                        image={<Visible width={90} height={54} />}
+                        noPadding
+                        title="Show"
+                        textPosition="outside"
+                      />
+                      <Thumbnail
+                        size="tiny"
+                        hideSelectedIcon
+                        height={54}
+                        image={<Hidden width={90} height={54} />}
+                        noPadding
+                        title="Hide"
+                        textPosition="outside"
+                      />
+                    </Box>
+                  ),
+                }),
+              ]}
+            />
           </SidePanel.Content>
         </SidePanel>
       </div>
+
+      {/* EDIT CONDITION MODAL */}
+
+      <Modal
+        isOpen={isAddConditionOpen}
+        onRequestClose={() => setIsAddConditionOpen(false)}
+        shouldCloseOnOverlayClick
+        screen="desktop"
+      >
+        <CustomModalLayout
+          primaryButtonText="Save"
+          secondaryButtonText="Cancel"
+          primaryButtonOnClick={() => console.log("Nigga")}
+          secondaryButtonOnClick={() => setIsAddConditionOpen(false)}
+          onCloseButtonClick={() => setIsAddConditionOpen(false)}
+          title="Add Condition"
+          overflowY="none"
+          content={
+            <Accordion
+              skin="light"
+              hideShadow
+              items={[
+                accordionItemBuilder({
+                  title:
+                    newCondition?.condition?.charAt(0)?.toUpperCase() +
+                      newCondition?.condition?.slice(1) || "Condtion",
+                  children: (
+                    <Box direction="horizontal" gap="10px">
+                      <Thumbnail
+                        size="tiny"
+                        hideSelectedIcon
+                        selected={newCondition?.condition === "or"}
+                        onClick={() => {
+                          setNewCondition((prev) => ({
+                            ...prev,
+                            condition: "or",
+                          }));
+                        }}
+                        width={210}
+                        height={54}
+                        image={
+                          <Text width={210} height={54}>
+                            Or
+                          </Text>
+                        }
+                        title="Statement functions if any of the conditions is true"
+                        textPosition="outside"
+                      />
+                      <Thumbnail
+                        size="tiny"
+                        hideSelectedIcon
+                        selected={newCondition?.condition === "and"}
+                        onClick={() => {
+                          setNewCondition((prev) => ({
+                            ...prev,
+                            condition: "and",
+                          }));
+                        }}
+                        width={210}
+                        height={54}
+                        image={<Text>And</Text>}
+                        title="Statement functions if all of the conditions are true"
+                        textPosition="outside"
+                      />
+                    </Box>
+                  ),
+                }),
+                accordionItemBuilder({
+                  title: "Field",
+                  children: (
+                    <Box direction="vertical">
+                      {formFields?.map((field) => {
+                        if (field.id !== currentStatement?.statement?.field) {
+                          return (
+                            <ListItemSelect
+                              title={field.label}
+                              selected={newCondition?.fieldId === field.id}
+                              onClick={() =>
+                                setNewCondition((prev) => ({
+                                  ...prev,
+                                  fieldId: field.id,
+                                  fieldType: field.type,
+                                }))
+                              }
+                            />
+                          );
+                        } else {
+                          return null;
+                        }
+                      })}
+                    </Box>
+                  ),
+                }),
+
+                // (newCondition.fieldType === "name" ||
+                //   newCondition.fieldType === "address") &&
+                //   accordionItemBuilder({
+                //     title: "SubField",
+                //     children: getSubFields(),
+                //   }),
+
+                accordionItemBuilder({
+                  title: "Rule",
+                  children: getRules(),
+                }),
+
+                accordionItemBuilder({
+                  title: "Value",
+                  children: (
+                    <Box direction="vertical">
+                      {formFields?.map((field) => {
+                        return <Text>{field.label}</Text>;
+                      })}
+                    </Box>
+                  ),
+                }),
+              ]}
+            />
+          }
+        />
+      </Modal>
     </div>
   );
 };

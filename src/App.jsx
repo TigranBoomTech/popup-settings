@@ -8,7 +8,7 @@ import { path } from "./helpers/common";
 
 function App() {
   let tempPath = path;
-  tempPath = "Map_Modal"; // For testing purposes
+  tempPath = "Conditional_Mailing";
 
   return (
     <>
@@ -18,7 +18,7 @@ function App() {
           case "Notification_Email":
             return <Mail_Editor />;
           case "Conditional_Mailing":
-            return <Conditional_Mailing />; // AddItem
+            return <Conditional_Mailing />; // Tuyna
           case "Templates":
             return <Templates />; // Tuyna
           case "Addons_Store":

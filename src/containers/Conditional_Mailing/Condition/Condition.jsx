@@ -95,7 +95,7 @@ const Condition = ({
         value: fieldValue,
         condition: selectedCondition,
       },
-      index
+      condition.id
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -216,7 +216,7 @@ const Condition = ({
               skin="destructive"
               text="Delete"
               prefixIcon={<Delete />}
-              onClick={() => removeCondition(index)}
+              onClick={() => removeCondition(condition.id)}
             />
           </PopoverMenu>
         }

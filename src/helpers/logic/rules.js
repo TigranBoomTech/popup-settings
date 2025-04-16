@@ -51,6 +51,15 @@ const termsRules = [
   { title: "not Checked", value: "dnotchecked" },
 ];
 
+const addressFields = [
+  { title: "Street Address", value: "street" },
+  { title: "Street Address 2", value: "street2" },
+  { title: "City", value: "city" },
+  { title: "State/Region", value: "state" },
+  { title: "Postal/Zip Code", value: "postal" },
+  { title: "Country", value: "country" },
+];
+
 export {
   defaultRules,
   fileRules,
@@ -60,4 +69,5 @@ export {
   inputRules,
   countryRules,
   termsRules,
+  addressFields,
 };

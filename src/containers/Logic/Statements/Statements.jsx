@@ -93,18 +93,6 @@ const Statements = ({
           </EmptyState>
         )}
       </Page.Content>
-
-      <div
-        className={classes.statements_side_panel_container}
-        style={{ right: `${rightPanel}px` }}
-      >
-        <SidePanel title="Statement" onCloseButtonClick={closePanel} width="600px">
-          <SidePanel.Header title="Statement" />
-          <SidePanel.Content>
-            <Show_Hide />
-          </SidePanel.Content>
-        </SidePanel>
-      </div>
     </Page>
   );
 };

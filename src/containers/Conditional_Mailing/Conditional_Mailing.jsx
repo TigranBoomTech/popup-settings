@@ -14,6 +14,7 @@ import {
 } from "@wix/design-system";
 import classes from "./Conditional_Mailing.module.scss";
 import Condition from "./Condition/Condition";
+import { nanoid } from "nanoid";
 
 let count = 2;
 const Conditional_Mailing = () => {
@@ -39,7 +40,11 @@ const Conditional_Mailing = () => {
           (addon) => addon.name === "ConfEmail"
         );
         if (condEmail?.value && condEmail?.value.length > 0) {
-          setConditions(condEmail.value);
+          const patchedConditions = condEmail.value.map((cond) => ({
+            ...cond,
+            id: cond.id || nanoid(),
+          }));
+          setConditions(patchedConditions);
         }
         if (confEmail?.value?.confEmailType === 1) {
           setConfirmationEmail(true);
@@ -79,20 +84,21 @@ const Conditional_Mailing = () => {
 
   const addCondition = () => {
     let tempConditions = [...conditions];
-    tempConditions.unshift({ field: "", value: "", email: "" });
+    tempConditions.push({ id: nanoid(), field: "", value: "", email: "" });
     setConditions(tempConditions);
   };
 
-  const removeCondition = (index) => {
-    const updatedConditions = conditions.filter((_, i) => {
-      return i !== index;
+  const removeCondition = (id) => {
+    const updatedConditions = conditions.filter((condition) => {
+      return condition.id !== id;
     });
     setConditions(updatedConditions);
   };
 
-  const updateCondition = (data, index) => {
-    const updatedConditions = [...conditions];
-    updatedConditions[index] = data;
+  const updateCondition = (data, id) => {
+    const updatedConditions = conditions.map((condition) =>
+      condition.id === id ? { ...condition, ...data } : condition
+    );
     setConditions(updatedConditions);
   };
 
@@ -113,16 +119,9 @@ const Conditional_Mailing = () => {
           </Box>
         ) : conditions.length > 0 ? (
           <Layout>
-            <Cell span={4}>
-              <Box width="100%" height="560px">
-                <AddItem size="small" onClick={() => addCondition()}>
-                  Add New Condition
-                </AddItem>
-              </Box>
-            </Cell>
             {conditions.map((condition, index) => {
               return (
-                <Cell span={4} key={`condition_${index}_${conditions.length}`}>
+                <Cell span={4} key={condition.id}>
                   <Condition
                     index={index}
                     fields={fieldsData}
@@ -134,6 +133,13 @@ const Conditional_Mailing = () => {
                 </Cell>
               );
             })}
+            <Cell span={4}>
+              <Box width="100%" height="560px">
+                <AddItem size="small" onClick={() => addCondition()}>
+                  Add New Condition
+                </AddItem>
+              </Box>
+            </Cell>
           </Layout>
         ) : (
           <Box width="100%" direction="vertical" gap={10}>
