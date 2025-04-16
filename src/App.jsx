@@ -28,7 +28,7 @@ function App() {
           case "Logic":
             return <Logic />; // Full refact + Kino x2
           case "Map_Modal":
-            return <Map />; // Full refact
+            return <Map />; // Tuyna
           default:
             return null;
         }

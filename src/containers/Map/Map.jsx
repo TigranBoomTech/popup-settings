@@ -19,6 +19,7 @@ import {
   InputArea,
   PopoverMenu,
   IconButton,
+  AddItem,
 } from "@wix/design-system";
 import classes from "./Map.module.scss";
 import {
@@ -242,9 +243,11 @@ const Map = () => {
           <InfoWindow
             position={selectedMarker.position}
             onCloseClick={() => setSelectedMarker(null)}
+            options={{
+              pixelOffset: new window.google.maps.Size(0, -40),
+            }}
           >
             <Box direction="vertical" gap="6px" width="200px">
-              <Text>{selectedMarker.value}</Text>
               <Text weight="bold">{selectedMarker.description}</Text>
             </Box>
           </InfoWindow>
@@ -253,14 +256,17 @@ const Map = () => {
 
       <Box
         className={classes.markers_side_panel}
-        style={{ display: isOpen ? "block" : "none" }}
+        style={{
+          display: isOpen ? "flex" : "none",
+          flexDirection: "column",
+          height: "100%",
+        }}
       >
         <Card.Header
           title="Markers"
           suffix={<Dismiss onClick={() => setIsOpen(false)} />}
         />
         <Card.Divider />
-
         <Box direction="vertical" gap="20px" className={classes.markers_list}>
           {markers.length > 0 ? (
             markers.map((marker, index) => (
@@ -335,6 +341,9 @@ const Map = () => {
               <Text>There are no markers yet</Text>
             </div>
           )}
+        </Box>
+        <Box padding="15px 20px">
+          <AddItem size="tiny" onClick={() => handleAddMarker()} />
         </Box>
       </Box>
     </>
