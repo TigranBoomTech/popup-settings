@@ -8,7 +8,7 @@ import { path } from "./helpers/common";
 
 function App() {
   let tempPath = path;
-  tempPath = "Conditional_Mailing";
+  tempPath = "Logic";
 
   return (
     <>
@@ -18,17 +18,17 @@ function App() {
           case "Notification_Email":
             return <Mail_Editor />;
           case "Conditional_Mailing":
-            return <Conditional_Mailing />; // Tuyna
+            return <Conditional_Mailing />;
           case "Templates":
-            return <Templates />; // Tuyna
+            return <Templates />;
           case "Addons_Store":
-            return <Addons />; // Tuyna
+            return <Addons />;
           case "Custom_JS":
-            return <div>Custom JS</div>; // Kino
+            return <div>Custom JS</div>;
           case "Logic":
-            return <Logic />; // Full refact + Kino x2
+            return <Logic />;
           case "Map_Modal":
-            return <Map />; // Tuyna
+            return <Map />;
           default:
             return null;
         }

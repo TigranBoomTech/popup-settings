@@ -11,10 +11,12 @@ import {
   Layout,
   Loader,
   Page,
+  TextButton,
 } from "@wix/design-system";
-import classes from "./Conditional_Mailing.module.scss";
 import Condition from "./Condition/Condition";
 import { nanoid } from "nanoid";
+import { Add } from "@wix/wix-ui-icons-common";
+import classes from "./Conditional_Mailing.module.scss";
 
 let count = 2;
 const Conditional_Mailing = () => {
@@ -134,7 +136,7 @@ const Conditional_Mailing = () => {
               );
             })}
             <Cell span={4}>
-              <Box width="100%" height="560px">
+              <Box width="100%" height="540px">
                 <AddItem size="small" onClick={() => addCondition()}>
                   Add New Condition
                 </AddItem>
@@ -143,13 +145,20 @@ const Conditional_Mailing = () => {
           </Layout>
         ) : (
           <Box width="100%" direction="vertical" gap={10}>
-            <AddItem size="small" onClick={() => addCondition()}>
-              Add New Condition
-            </AddItem>
             <EmptyState
+              className={classes.empty_state}
               title="There are no conditions yet"
               subtitle="Add your first condition !"
-            />
+            >
+              <TextButton
+                prefixIcon={<Add />}
+                onClick={() => {
+                  addCondition();
+                }}
+              >
+                Add Condition
+              </TextButton>
+            </EmptyState>
           </Box>
         )}
       </Page.Content>
